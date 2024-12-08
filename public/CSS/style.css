@@ -1,0 +1,362 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background-color: #f0f8ff;
+}
+html {
+  scroll-behavior: smooth;
+}
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  position: sticky;
+}
+.header-title {
+  font-size: 24px;
+  margin-left: 20px;
+  position: relative;
+  top: -15px;
+}
+.header-left {
+  display: flex;
+  align-items: center;
+}
+.menu {
+  z-index: 1000;
+  position: absolute;
+  top: 50px;
+  width: 30%;
+  min-width: 300px;
+  background: #ffffff;
+  transition: transform 0.6s; /* Slow show transition */
+  transform: translateX(-102%); /* Hidden position */
+  border: 1px solid wheat;
+  border-left: none;
+}
+
+.menu.show {
+  transition: transform 0.6s; /* Show transition duration */
+  transform: translateX(0); /* Visible position */
+}
+
+.menu.hide {
+  transition: transform 0.2s; /* Fast hide transition */
+  transform: translateX(-102%);
+}
+
+.menu ul li {
+  padding: 50px;
+  list-style: none;
+}
+.menu ul li:hover {
+  background: rgb(237, 245, 242);
+}
+.header-left h1 {
+  margin-left: 10px;
+  font-size: 1.5rem;
+  color: #333;
+  position: relative;
+  top: 15px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.write-btn {
+  display: flex;
+  align-items: center;
+  background-color: #f3f4f6;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  color: #333;
+  cursor: pointer;
+  margin-top: 10px;
+}
+.write-btn-mobile {
+  display: none; /* Hide the mobile screen write button in desktop screen*/
+}
+.write-btn i {
+  margin-right: 5px;
+  font-size: 1rem;
+}
+
+.notification-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  margin-top: 12px;
+}
+.notification-btn::before {
+  content: attr(
+    notification-count
+  ); /* Replace with your dynamic count or update via JavaScript */
+  position: absolute; /* Positioning badge */
+  right: 70px;
+  top: 5px; /* Adjust to position above the button */
+  background-color: red; /* Badge background color */
+  color: white; /* Text color */
+  border-radius: 50%; /* Makes the badge circular */
+  min-width: 20px; /* Minimum width for the badge*/
+  text-align: center; /* Center the text */
+}
+.notification-btn:hover {
+  color: green;
+}
+
+.profile-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+.menu-btn,
+.back-btn {
+  font-size: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: black;
+}
+.search-bar-container {
+  position: relative;
+  width: 100%;
+  float: left;
+}
+.search-bar {
+  float: left;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 30px;
+  width: 25%;
+  background-color: transparent;
+  position: relative;
+  margin: 20px;
+}
+.searchIcon {
+  float: left;
+  width: 10%;
+}
+.searchInput {
+  float: left;
+  width: 85%;
+  padding: 5px;
+  background: transparent;
+  border: transparent;
+  outline: none;
+}
+
+nav {
+  float: left;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  background-color: white;
+  padding: 10px 0;
+  border-bottom: 1px solid #ddd;
+  position: sticky;
+  top: 0px;
+  z-index: 100;
+  margin-bottom: 30px;
+}
+
+.tab {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 10px 20px;
+}
+
+.tab.active {
+  font-weight: bold;
+  color: blue;
+  border-bottom: 2px solid blue;
+}
+
+.blog-list {
+  padding: 2% 20%;
+  width: 60%;
+}
+
+.blog-list article {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  background: white;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.blog-list img {
+  width: 80px;
+  height: 80px;
+  margin-right: 15px;
+  border-radius: 10px;
+}
+
+.blog-detail {
+  text-align: center;
+  padding: 20px;
+  position: relative;
+}
+
+.blog-detail img {
+  width: 150px;
+  margin-bottom: 20px;
+}
+
+.blog-detail h1 {
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+.blog-item {
+  position: relative;
+}
+.like-btn {
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  float: right;
+  position: absolute;
+  top: 40px;
+  right: 10px;
+}
+
+.like-count {
+  margin-left: 5px;
+}
+
+.read-all-btn {
+  background-color: blue;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.hidden {
+  display: none;
+}
+
+.save-blog-btn {
+  background-color: blue;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin: 20px auto;
+  display: block;
+}
+
+.add-blog-form {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.add-blog-form input,
+.add-blog-form textarea {
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+.add-blog-form input[type="file"] {
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+.scrollToTop {
+  width: 30px;
+  position: fixed;
+  bottom: 30px;
+  right: 15%;
+  display: block;
+}
+/* Mobile Screen CSS */
+@media (min-width: 300px) and (max-width: 800px) {
+  .write-btn {
+    display: none;
+  }
+  .write-btn-mobile {
+    display: block;
+    position: fixed;
+    bottom: 5%;
+    right: 10%;
+    z-index: 300;
+    background-color: rgba(104, 195, 252, 0.714);
+    align-items: center;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+
+  .search-bar {
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 30px;
+    width: 80%;
+    background-color: transparent;
+    position: relative;
+    margin: 20px;
+  }
+  .searchIcon {
+    float: left;
+    position: absolute;
+    width: 20%;
+    top: 15px;
+    left: 5px;
+  }
+  .searchInput {
+    width: 80%;
+    background-color: transparent;
+  }
+  .blog-list {
+    padding: 3% 3%;
+    width: 94%;
+  }
+  .scrollToTop {
+    width: 30px;
+    position: fixed;
+    bottom: 100px;
+    right: 30px;
+    display: none;
+  }
+  .menu {
+    z-index: 1000;
+    position: absolute;
+    top: 50px;
+    width: 30%;
+    min-width: 300px;
+    background: #262626;
+    transition: 0.6s;
+    transform: translateX(-100%);
+  }
+}

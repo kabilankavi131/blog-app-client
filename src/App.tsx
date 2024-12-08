@@ -1,26 +1,20 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-
-function App() {
+import React from "react";
+import HomePage from "./components/HomePage";
+import BlogList from "./components/BlogList";
+import AddBlogPage from "./components/AddBlogPage";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import BlogDetailPage from "./components/BlogDetailPage";
+const App: React.FC = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/blogs" element={<BlogList />} />
+        <Route path="/blog/:id" element={<BlogDetailPage  />} />
+        <Route path="/addblog" element={<AddBlogPage />} />
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;
