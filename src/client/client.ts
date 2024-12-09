@@ -1,9 +1,10 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-
+const prdUrl = "https://blogspace-app-server.vercel.app/getuserblogs";
+const localUrl = "http://localhost:5000/getuserblogs";
 const client = async (): Promise<any> => {
   const blogConfiguration: AxiosRequestConfig = {
     method: "POST",
-    url: "http://localhost:5000/getuserblogs",
+    url: prdUrl,
     headers: {
       "Content-Type": "application/json",
     },

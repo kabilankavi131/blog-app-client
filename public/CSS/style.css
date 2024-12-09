@@ -271,7 +271,18 @@ nav {
   margin: 20px auto;
   display: block;
 }
-
+#add-blog-page {
+  padding: 20px;
+}
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+.loading-container img {
+  width: 100px;
+}
 .add-blog-form {
   display: flex;
   flex-direction: column;
