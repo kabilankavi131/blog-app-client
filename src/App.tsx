@@ -29,6 +29,8 @@ const App: React.FC = () => {
             <Route path="/" element={<WelcomeScreen />} />
             <Route path="/login" element={<LoginScreen />} />
             <Route path="/signup" element={<SignUpScreen />} />
+
+            {/* Add UserProfile route */}
           </Routes>
         </Router>
       </GoogleOAuthProvider>

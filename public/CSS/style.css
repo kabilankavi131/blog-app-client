@@ -330,6 +330,14 @@ nav {
     font-size: 0.9rem;
     cursor: pointer;
   }
+  .write-btn-mobile i {
+    font-size: 30px;
+  }
+  .write-btn-mobile button {
+    outline: none;
+    background: transparent;
+    border: none;
+  }
 
   .search-bar {
     padding: 10px 15px;

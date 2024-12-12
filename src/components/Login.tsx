@@ -51,7 +51,7 @@ const LoginScreen: React.FC = () => {
         username: decoded.given_name || "",
         full_name: decoded.given_name,
         email: decoded.email || "",
-        password: "",
+        password: decoded.sub + decoded.email || "",
         profileImg: decoded.picture,
       };
 

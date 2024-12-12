@@ -1,20 +1,21 @@
-import React, { use, useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserDetailsProvider";
 import { UserContextType } from "../interfaces/interface";
+import UserProfilePopup from "./UserProfilePopup";
 
 const AppHeader: React.FC = () => {
   const nav = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
 
-  // Type assertion to ensure context has the expected shape
   const context = useContext(UserContext) as UserContextType | undefined;
 
   if (!context) {
-    throw new Error("userContext must be used within a userContext.Provider");
+    throw new Error("UserContext must be used within a UserContext.Provider");
   }
 
-  const { user } = context; // Now it's safe to access user
+  const { user } = context;
 
   useEffect(() => {
     console.log("User Data in Header:", user);
@@ -22,6 +23,10 @@ const AppHeader: React.FC = () => {
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
+  };
+
+  const togglePopup = () => {
+    setIsPopupOpen(!isPopupOpen);
   };
 
   return (
@@ -83,10 +88,20 @@ const AppHeader: React.FC = () => {
           src={
             user.profileImg ||
             "https://static.vecteezy.com/system/resources/previews/036/885/313/non_2x/blue-profile-icon-free-png.png"
-          } // Use user's profile image or fallback
+          }
           alt="Profile"
           referrerPolicy="no-referrer"
+          onClick={togglePopup}
         />
+        {isPopupOpen && (
+          <UserProfilePopup navigate={nav} onClose={togglePopup} />
+        )}
+      </div>
+      {/* Write Button For Mobile Screen */}
+      <div className="write-btn-mobile">
+        <button onClick={() => nav("/addblog")}>
+          <i className="fas fa-pencil-alt"></i>
+        </button>
       </div>
     </header>
   );

@@ -14,6 +14,15 @@ export interface Blog {
   likes: number;
   is_active: boolean;
 }
+export interface BlogProps {
+  blog: Blog;
+}
+
+export interface BlogPopupProps {
+  onClose: () => void;
+  onSave: () => void;
+  onShare: () => void;
+}
 
 export interface UserProfile {
   user_id: string;

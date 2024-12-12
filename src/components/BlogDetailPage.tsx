@@ -1,11 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
-import { Blog } from "../interfaces/interface";
-
-interface BlogDetailProps {
-  blogs: Blog[];
-}
+import { ThreeDotsButton, BlogPopup } from "./BlogPopup"; // Ensure to import
 
 const BlogContainer = styled.div`
   width: 60%;
@@ -122,21 +118,63 @@ const blog = {
 
 const BlogDetailPage: React.FC = () => {
   const [likes, setLikes] = useState(blog.likes);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
   const navigate = useNavigate();
-
+  const popupRef = useRef<HTMLDivElement>(null);
   const handleLike = () => {
     setLikes(likes + 1);
   };
+
+  const togglePopup = () => {
+    setIsPopupOpen(!isPopupOpen);
+  };
+
+  const handleSave = () => {
+    // Logic to save the post
+    console.log("Post saved");
+  };
+
+  const handleShare = () => {
+    // Logic to share the post
+    console.log("Post shared");
+  };
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        popupRef.current &&
+        !popupRef.current.contains(event.target as Node)
+      ) {
+        setIsPopupOpen(false);
+      }
+    };
+
+    if (isPopupOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isPopupOpen]);
 
   const { id = "" } = useParams<{ id: string }>();
 
   if (!blog) {
     return <div>Blog not found</div>;
   }
-
   return (
     <BlogContainer>
       <BackButton onClick={() => navigate("/home")}>← Back</BackButton>
+      <ThreeDotsButton onClick={togglePopup}>⋮</ThreeDotsButton>
+      {isPopupOpen && (
+        <div ref={popupRef}>
+          <BlogPopup
+            onClose={togglePopup}
+            onSave={handleSave}
+            onShare={handleShare}
+          />
+        </div>
+      )}
       <Title>{blog.blog_title}</Title>
       <Details>
         By {blog.author_id} | {blog.blog_date} | {blog.blog_read_time} |

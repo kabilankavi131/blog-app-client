@@ -1,25 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-
-export interface Blog {
-  blog_id: number;
-  author_id: string;
-  blog_category_id: number;
-  blog_title: string;
-  blog_content: string;
-  blog_cover_image: string;
-  blog_date: string;
-  blog_read_time: string;
-  tags: string[];
-  category: string;
-  likes: number;
-  is_active: boolean;
-}
-
-interface BlogProps {
-  blog: Blog;
-}
+import { ThreeDotsButton, BlogPopup } from "./BlogPopup"; // Ensure to import
+import { BlogProps } from "../interfaces/interface";
 
 const BlogContainer = styled.div`
   width: 90%;
@@ -35,10 +18,12 @@ const BlogContainer = styled.div`
     margin-top: 150px;
   }
 `;
+
 const NormalDiv = styled.div`
   width: 100%;
   position: relative;
 `;
+
 const Title = styled.h1`
   font-size: 2.5em;
   margin-bottom: 10px;
@@ -107,13 +92,57 @@ const LikesCount = styled.span`
 
 const BlogItem: React.FC<BlogProps> = ({ blog }) => {
   const [likes, setLikes] = useState(blog.likes);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
   const navigate = useNavigate();
+  const popupRef = useRef<HTMLDivElement>(null);
+
   const handleLike = () => {
     setLikes(likes + 1);
   };
 
+  const togglePopup = () => {
+    setIsPopupOpen(!isPopupOpen);
+  };
+
+  const handleSave = () => {
+    console.log("Post saved");
+  };
+
+  const handleShare = () => {
+    console.log("Post shared");
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        popupRef.current &&
+        !popupRef.current.contains(event.target as Node)
+      ) {
+        setIsPopupOpen(false);
+      }
+    };
+
+    if (isPopupOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isPopupOpen]);
+
   return (
     <BlogContainer>
+      <ThreeDotsButton onClick={togglePopup}>⋮</ThreeDotsButton>
+      {isPopupOpen && (
+        <div ref={popupRef}>
+          <BlogPopup
+            onClose={togglePopup}
+            onSave={handleSave}
+            onShare={handleShare}
+          />
+        </div>
+      )}
       <NormalDiv onClick={() => navigate("/blog/0")}>
         <Title>{blog.blog_title}</Title>
         <Details>
