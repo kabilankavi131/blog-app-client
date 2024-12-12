@@ -1,18 +1,61 @@
-import React from "react";
+import React, { use, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../context/UserDetailsProvider";
+import { UserContextType } from "../interfaces/interface";
 
-interface AppHeaderProps {
-  toggleMenu: () => void;
-}
-
-const AppHeader: React.FC<AppHeaderProps> = ({ toggleMenu }) => {
+const AppHeader: React.FC = () => {
   const nav = useNavigate();
+  const [isOpen, setIsOpen] = useState(false);
+
+  // Type assertion to ensure context has the expected shape
+  const context = useContext(UserContext) as UserContextType | undefined;
+
+  if (!context) {
+    throw new Error("userContext must be used within a userContext.Provider");
+  }
+
+  const { user } = context; // Now it's safe to access user
+
+  useEffect(() => {
+    console.log("User Data in Header:", user);
+  });
+
+  const toggleMenu = () => {
+    setIsOpen(!isOpen);
+  };
+
   return (
     <header className="app-header">
       <div className="header-left">
-        <button className="menu-btn" onClick={toggleMenu}>
-          ☰
-        </button>
+        <div className="hamburgerMenu">
+          <button
+            className={`hamburger-button ${
+              isOpen ? "hamburger-button-close" : "hamburger-button-open"
+            }`}
+            onClick={toggleMenu}
+          >
+            ☰
+          </button>
+          <div className={`sidebar ${isOpen ? "open" : ""}`}>
+            <button className="close-button" onClick={toggleMenu}>
+              ✕
+            </button>
+            <ul>
+              <li>
+                <a onClick={() => nav("/")}>Home</a>
+              </li>
+              <li>
+                <a onClick={() => nav("/about")}>About</a>
+              </li>
+              <li>
+                <a onClick={() => nav("/favourites")}>Favourites</a>
+              </li>
+              <li>
+                <a onClick={() => nav("/contact")}>Contact</a>
+              </li>
+            </ul>
+          </div>
+        </div>
         <div className="header-title">
           <h1>Blog Space</h1>
         </div>
@@ -37,8 +80,12 @@ const AppHeader: React.FC<AppHeaderProps> = ({ toggleMenu }) => {
         </button>
         <img
           className="profile-pic"
-          src="https://via.placeholder.com/40"
+          src={
+            user.profileImg ||
+            "https://static.vecteezy.com/system/resources/previews/036/885/313/non_2x/blue-profile-icon-free-png.png"
+          } // Use user's profile image or fallback
           alt="Profile"
+          referrerPolicy="no-referrer"
         />
       </div>
     </header>

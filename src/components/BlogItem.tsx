@@ -1,38 +1,139 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { BlogInterface, BlogProps } from "../interfaces/interface";
-const BlogItem: React.FC<any> = ({ blog }) => {
-  const nav = useNavigate();
+import styled from "styled-components";
+
+export interface Blog {
+  blog_id: number;
+  author_id: string;
+  blog_category_id: number;
+  blog_title: string;
+  blog_content: string;
+  blog_cover_image: string;
+  blog_date: string;
+  blog_read_time: string;
+  tags: string[];
+  category: string;
+  likes: number;
+  is_active: boolean;
+}
+
+interface BlogProps {
+  blog: Blog;
+}
+
+const BlogContainer = styled.div`
+  width: 90%;
+  margin: 20px auto;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background: #ffffff;
+  border-radius: 10px;
+  color: #333;
+  position: relative;
+
+  &:first-child {
+    margin-top: 150px;
+  }
+`;
+const NormalDiv = styled.div`
+  width: 100%;
+  position: relative;
+`;
+const Title = styled.h1`
+  font-size: 2.5em;
+  margin-bottom: 10px;
+`;
+
+const Details = styled.div`
+  color: #666;
+  margin-bottom: 20px;
+  font-size: 0.9em;
+`;
+
+const CoverImage = styled.img`
+  width: 30%;
+  max-height: 400px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  float: left;
+`;
+
+const Content = styled.p`
+  width: 100%;
+  font-size: 1.2em;
+  line-height: 1.6;
+`;
+
+const Tags = styled.div`
+  margin: 20px 0;
+  display: flex;
+  flex-wrap: wrap;
+`;
+
+const Tag = styled.span`
+  background: #eee;
+  color: #555;
+  padding: 5px 10px;
+  border-radius: 5px;
+  margin: 5px;
+`;
+
+const Footer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+`;
+
+const LikeButton = styled.button`
+  background: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+
+  &:hover {
+    background: #0056b3;
+  }
+`;
+
+const LikesCount = styled.span`
+  font-size: 1.2em;
+  color: #333;
+`;
+
+const BlogItem: React.FC<BlogProps> = ({ blog }) => {
+  const [likes, setLikes] = useState(blog.likes);
+  const navigate = useNavigate();
+  const handleLike = () => {
+    setLikes(likes + 1);
+  };
 
   return (
-    <article
-      onClick={() => {
-        nav(`/blog/0`);
-      }}
-      className="blog-item"
-      data-index=""
-    >
-      <img src={blog.cover_image} alt="Blog Thumbnail" />
-      <div>
-        <h3>{blog.title}</h3>
-        {/* <p>{`${blog.date} - ${blog.readTime}`}</p> */}
-        <p>{blog.content}</p>
-      </div>
-      <div className="like-btn">
-        <svg
-          className="like-svg"
-          aria-label="Like"
-          fill="currentColor"
-          height="24"
-          role="img"
-          viewBox="0 0 24 24"
-          width="24"
-        >
-          <title>Like</title>
-          <path d="M16.792 3.904A4.989 4.989 0 0 1 21.5 9.122c0 3.072-2.652 4.959-5.197 7.222-2.512 2.243-3.865 3.469-4.303 3.752-.477-.309-2.143-1.823-4.303-3.752C5.141 14.072 2.5 12.167 2.5 9.122a4.989 4.989 0 0 1 4.708-5.218 4.21 4.21 0 0 1 3.675 1.941c.84 1.175.98 1.763 1.12 1.763s.278-.588 1.11-1.766a4.17 4.17 0 0 1 3.679-1.938m0-2a6.04 6.04 0 0 0-4.797 2.127 6.052 6.052 0 0 0-4.787-2.127A6.985 6.985 0 0 0 .5 9.122c0 3.61 2.55 5.827 5.015 7.97.283.246.569.494.853.747l1.027.918a44.998 44.998 0 0 0 3.518 3.018 2 2 0 0 0 2.174 0 45.263 45.263 0 0 0 3.626-3.115l.922-.824c.293-.26.59-.519.885-.774 2.334-2.025 4.98-4.32 4.98-7.94a6.985 6.985 0 0 0-6.708-7.218Z"></path>
-        </svg>
-      </div>
-    </article>
+    <BlogContainer>
+      <NormalDiv onClick={() => navigate("/blog/0")}>
+        <Title>{blog.blog_title}</Title>
+        <Details>
+          By {blog.author_id} | {blog.blog_date} | {blog.blog_read_time} |
+          Category: {blog.category}
+        </Details>
+        <CoverImage src={blog.blog_cover_image} alt="Blog Cover" />
+        <Content>{blog.blog_content}</Content>
+        <Tags>
+          {blog.tags.map((tag) => (
+            <Tag key={tag}>{tag}</Tag>
+          ))}
+        </Tags>
+      </NormalDiv>
+
+      <Footer>
+        <LikeButton onClick={handleLike}>Like</LikeButton>
+        <LikesCount>{likes} Likes</LikesCount>
+      </Footer>
+    </BlogContainer>
   );
 };
 

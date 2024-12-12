@@ -5,7 +5,7 @@ const ScrollToTopButton: React.FC = () => {
     <div className="scrolltotop-container">
       <img
         id="scrollToTopBtn"
-        src="./Images/scrolltotop.png"
+        src="https://blog-app-resources.vercel.app/Images/scrolltotop.png"
         alt="Scroll to Top"
         className="scrollToTop"
       />

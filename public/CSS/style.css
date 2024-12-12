@@ -20,6 +20,7 @@ html {
   background-color: #ffffff;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   position: sticky;
+  z-index: 200;
 }
 .header-title {
   font-size: 24px;
@@ -32,7 +33,7 @@ html {
   align-items: center;
 }
 .menu {
-  z-index: 1000;
+  z-index: 2000;
   position: absolute;
   top: 50px;
   width: 30%;
@@ -173,7 +174,7 @@ nav {
   border-bottom: 1px solid #ddd;
   position: sticky;
   top: 0px;
-  z-index: 100;
+  z-index: 1;
   margin-bottom: 30px;
 }
 
@@ -271,7 +272,8 @@ nav {
   margin: 20px auto;
   display: block;
 }
-#add-blog-page {
+#add-blog-page,
+#detail-page {
   padding: 20px;
 }
 .loading-container {
@@ -370,4 +372,178 @@ nav {
     transition: 0.6s;
     transform: translateX(-100%);
   }
+}
+
+/* Hamburger menu */
+.hamburgerMenu {
+  position: relative;
+  z-index: 1000;
+}
+.hamburger-button {
+  font-size: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 1000;
+}
+.hamburger-button-close {
+  visibility: hidden;
+}
+.hamburger-button-open {
+  visibility: visible;
+}
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -300px;
+  width: 250px;
+  height: 100%;
+  background-color: #333;
+  color: #fff;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+  transition: left 0.3s ease-in-out;
+  z-index: 999;
+}
+
+.sidebar.open {
+  left: 0;
+}
+
+.sidebar .close-button {
+  font-size: 24px;
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  margin-bottom: 16px;
+  padding: 20px;
+}
+
+.sidebar ul {
+  list-style: none;
+}
+
+.sidebar ul li {
+  padding: 30px;
+}
+.sidebar ul li:hover {
+  background-color: gray;
+}
+
+.sidebar ul li a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 18px;
+}
+
+.sidebar ul li a:hover {
+  text-decoration: underline;
+}
+
+/* Blog Item */
+.blog-container {
+  max-width: 800px;
+  margin: 20px auto;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+  top: 150px;
+  transition: transform 0.3s ease-in-out;
+}
+
+.blog-container:hover {
+  transform: translateY(-5px);
+}
+
+.blog-header {
+  padding: 20px;
+  background-color: #3f51b5;
+  color: #fff;
+}
+
+.blog-title {
+  font-size: 24px;
+  margin-bottom: 5px;
+}
+
+.blog-meta,
+.blog-read-time {
+  font-size: 14px;
+  margin: 0;
+  opacity: 0.9;
+}
+
+.blog-cover {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.blog-content {
+  padding: 20px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #333;
+}
+
+.blog-tags {
+  padding: 20px;
+  border-top: 1px solid #ddd;
+  background: #f9f9f9;
+}
+
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag {
+  background: #e0f7fa;
+  color: #00796b;
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.blog-likes {
+  padding: 20px;
+  border-top: 1px solid #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f9f9f9;
+}
+
+.like-button {
+  background: #ff5252;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.like-button:hover {
+  background: #d32f2f;
+}
+
+.like-count {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+.blog-loading {
+  font-size: 20px;
+  color: #666;
+  text-align: center;
+  margin: 50px 0;
 }

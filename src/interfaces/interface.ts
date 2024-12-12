@@ -1,23 +1,49 @@
-export interface BlogInterface {
-  index: number;
-  author_id: number; // ID of the author
-  blog_id: number; // Unique ID for the blog post
-  category_id: number; // ID for the category the post belongs to
-  content: string; // Content of the blog post
-  cover_image: string; // URL of the cover image
-  created_at: string; // Timestamp for when the post was created
-  created_by: string; // Name of the creator
-  is_active: number; // Status of the post (active/inactive)
-  modified_at: string; // Timestamp for when the post was last modified
-  modified_by: string; // Name of the person who last modified the post
-  title: string; // Title of the blog post
-  imageUrl: string;
-  date: string;
-  readTime: string;
-  description: string;
+import { jwtDecode, JwtPayload } from "jwt-decode";
+
+export interface Blog {
+  blog_id: number;
+  author_id: string;
+  blog_category_id: number;
+  blog_title: string;
+  blog_content: string;
+  blog_cover_image: string;
+  blog_date: string;
+  blog_read_time: string;
+  tags: string[];
+  category: string;
+  likes: number;
+  is_active: boolean;
 }
-export interface BlogProps {
-  title: string;
-  content: string;
-  image: string;
+
+export interface UserProfile {
+  user_id: string;
+  username: string;
+  full_name: string;
+  email: string;
+  profileImg: string; // Change to string to store URL instead of Blob
+  password: string;
+}
+
+export interface UserContextType {
+  user: UserProfile;
+  setUser: React.Dispatch<React.SetStateAction<UserProfile>>;
+}
+
+export interface BlogNavProps {
+  activeTab: number;
+  onTabChange: (tabKey: number) => void;
+}
+
+export interface GoogleButtonProps {
+  onClick: () => void;
+}
+
+export interface GoogleJwtPayload extends JwtPayload {
+  email: string;
+  email_verified: boolean;
+  given_name: string;
+  family_name: string;
+  picture: string;
+  name: string;
+  [key: string]: any;
 }

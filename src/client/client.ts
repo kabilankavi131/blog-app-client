@@ -1,16 +1,12 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-const prdUrl = "https://blogspace-app-server.vercel.app/getuserblogs";
-const localUrl = "http://localhost:5000/getuserblogs";
-const client = async (): Promise<any> => {
+const client = async (endpoint: any, method: any, data: any): Promise<any> => {
   const blogConfiguration: AxiosRequestConfig = {
-    method: "POST",
-    url: prdUrl,
+    method: method,
+    url: endpoint,
     headers: {
-      "Content-Type": "application/json",
+      "Content-Type": "multipart/form-data",
     },
-    data: {
-      author_id: 91,
-    },
+    data: data,
   };
 
   try {

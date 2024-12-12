@@ -4,8 +4,9 @@ import ScrollToTopButton from "./ScrollToTopButton";
 import BlogList from "./BlogList";
 import BlogNav from "./BlogNav";
 import SearchBar from "./SearchBar";
-const HomePage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<number>(1); // Default to first tab
+
+const LatestBlog: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<number>(2); // Default to first tab
 
   const handleTabChange = (tabKey: number) => {
     setActiveTab(tabKey);
@@ -21,4 +22,4 @@ const HomePage: React.FC = () => {
   );
 };
 
-export default HomePage;
+export default LatestBlog;

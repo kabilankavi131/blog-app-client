@@ -1,26 +1,49 @@
-import React, { useRef } from "react";
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { BlogNavProps } from "../interfaces/interface";
 
-const BlogNav: React.FC = () => {
+const BlogNav: React.FC<BlogNavProps> = ({ activeTab, onTabChange }) => {
+  const nav = useNavigate();
   const toggletab = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const buttons = document.querySelectorAll(".tab");
-    buttons.forEach((button) => button.classList.remove("active"));
-    event.currentTarget.classList.add("active");
+    const key = Number(event.currentTarget.getAttribute("data-key"));
+    onTabChange(key);
+    switch (key) {
+      case 1:
+        nav("/home");
+        break;
+      case 2:
+        nav("/blogs/latest");
+        break;
+      case 3:
+        nav("/blogs/trending");
+        break;
+    }
   };
 
   return (
-    <>
-      <nav>
-        <button onClick={toggletab} className="tab active">
-          Featured
-        </button>
-        <button onClick={toggletab} className="tab">
-          Latest
-        </button>
-        <button onClick={toggletab} className="tab">
-          Trending
-        </button>
-      </nav>
-    </>
+    <nav>
+      <button
+        data-key={1}
+        onClick={toggletab}
+        className={`tab ${activeTab === 1 ? "active" : ""}`}
+      >
+        Featured
+      </button>
+      <button
+        data-key={2}
+        onClick={toggletab}
+        className={`tab ${activeTab === 2 ? "active" : ""}`}
+      >
+        Latest
+      </button>
+      <button
+        data-key={3}
+        onClick={toggletab}
+        className={`tab ${activeTab === 3 ? "active" : ""}`}
+      >
+        Trending
+      </button>
+    </nav>
   );
 };
 
