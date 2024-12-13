@@ -4,9 +4,17 @@ import ScrollToTopButton from "./ScrollToTopButton";
 import BlogList from "./BlogList";
 import BlogNav from "./BlogNav";
 import SearchBar from "./SearchBar";
+import { persistUserData } from "../services/services";
+import { useNavigate } from "react-router-dom";
 const HomePage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<number>(1); // Default to first tab
-
+  const navigate = useNavigate();
+  const userprofile = persistUserData.loadUserData();
+  useEffect(() => {
+    if (!userprofile.user_id) {
+      navigate("/");
+    }
+  }, []);
   const handleTabChange = (tabKey: number) => {
     setActiveTab(tabKey);
   };

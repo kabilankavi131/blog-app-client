@@ -1,9 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Box, Typography, Button, Grid } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { UserProfile } from "../interfaces/interface";
+import { persistUserData } from "../services/services";
 
 const WelcomeScreen: React.FC = () => {
   const navigate = useNavigate();
+  const userProfile: UserProfile = persistUserData.loadUserData();
+  useEffect(() => {
+    if (userProfile.user_id) {
+      navigate("/home");
+    }
+  }, [userProfile, navigate]);
 
   return (
     <Box sx={styles.container}>

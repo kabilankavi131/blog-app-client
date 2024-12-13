@@ -39,7 +39,7 @@ const AddBlog: React.FC = () => {
 
   return (
     <Form onSubmit={handleSubmit}>
-      <BackButton onClick={() => navigate(-1)}>← Back</BackButton>
+      <BackButton onClick={() => navigate("/home")}>← Back</BackButton>
       <h1>Add New Blog</h1>
       <Input
         type="text"

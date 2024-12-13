@@ -6,11 +6,18 @@ import { useGoogleOneTapLogin } from "@react-oauth/google";
 import { UserContext } from "../context/UserDetailsProvider";
 import { GoogleJwtPayload, UserProfile } from "../interfaces/interface";
 import { jwtDecode } from "jwt-decode";
-import { loginUser } from "../services/services";
-import { useContext, useState } from "react";
+import { loginUser, persistUserData } from "../services/services";
+import { useContext, useEffect, useState } from "react";
 
 const LoginScreen: React.FC = () => {
   const navigate = useNavigate();
+
+  const userProfile = persistUserData.loadUserData();
+  useEffect(() => {
+    if (userProfile.user_id) {
+      navigate("/home");
+    }
+  }, []);
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
@@ -35,6 +42,7 @@ const LoginScreen: React.FC = () => {
       };
 
       setUser(updatedUserData);
+      persistUserData.saveUserData(updatedUserData);
       navigate("/home");
     } catch (error) {
       console.error("Error during Google login:", error);
@@ -56,6 +64,7 @@ const LoginScreen: React.FC = () => {
       };
 
       setUser(updatedUserData);
+      persistUserData.saveUserData(updatedUserData);
       loginUser(updatedUserData.email, updatedUserData.password);
       navigate("/home");
     },

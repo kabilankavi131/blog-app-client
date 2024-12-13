@@ -60,6 +60,8 @@ export const loginUser = async (email: string, password: string) => {
 };
 
 export const registerUser = async (userData: UserProfile) => {
+  console.log("User Details : ", userData);
+
   const formData = new FormData();
   formData.append("user_id", userData.email);
   formData.append("username", userData.email);
@@ -78,4 +80,43 @@ export const registerUser = async (userData: UserProfile) => {
   } catch (error) {
     console.error("Error during user registration:", error);
   }
+};
+
+export const persistUserData = {
+  saveUserData: (userData: UserProfile): void => {
+    try {
+      const serializedData = JSON.stringify(userData);
+      localStorage.setItem("user_data", serializedData);
+    } catch (error) {
+      console.error("Error saving user data to localStorage:", error);
+    }
+  },
+
+  loadUserData: (): UserProfile => {
+    try {
+      const serializedData = localStorage.getItem("user_data");
+      if (serializedData) {
+        return JSON.parse(serializedData) as UserProfile;
+      }
+    } catch (error) {
+      console.error("Error loading user data from localStorage:", error);
+    }
+    // Return default empty user profile if no data found
+    return {
+      user_id: "",
+      username: "",
+      full_name: "",
+      password: "",
+      email: "",
+      profileImg: "",
+    };
+  },
+
+  clearUserData: (): void => {
+    try {
+      localStorage.removeItem("user_data");
+    } catch (error) {
+      console.error("Error clearing user data from localStorage:", error);
+    }
+  },
 };

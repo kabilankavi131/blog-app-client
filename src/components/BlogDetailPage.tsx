@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { ThreeDotsButton, BlogPopup } from "./BlogPopup"; // Ensure to import
 
 const BlogContainer = styled.div`
-  width: 60%;
+  width: 65%;
   margin: 20px auto;
   padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -12,6 +12,9 @@ const BlogContainer = styled.div`
   border-radius: 10px;
   color: #333;
   position: relative;
+  @media (min-width: 300px) and (max-width: 800px) {
+    width: 85%;
+  }
 `;
 
 const BackButton = styled.button`
@@ -172,6 +175,7 @@ const BlogDetailPage: React.FC = () => {
             onClose={togglePopup}
             onSave={handleSave}
             onShare={handleShare}
+            isDetailPage={true}
           />
         </div>
       )}

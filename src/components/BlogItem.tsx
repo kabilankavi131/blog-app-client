@@ -25,7 +25,7 @@ const NormalDiv = styled.div`
 `;
 
 const Title = styled.h1`
-  font-size: 2.5em;
+  font-size: 2em;
   margin-bottom: 10px;
 `;
 
@@ -140,6 +140,7 @@ const BlogItem: React.FC<BlogProps> = ({ blog }) => {
             onClose={togglePopup}
             onSave={handleSave}
             onShare={handleShare}
+            isDetailPage={false}
           />
         </div>
       )}
@@ -147,7 +148,7 @@ const BlogItem: React.FC<BlogProps> = ({ blog }) => {
         <Title>{blog.blog_title}</Title>
         <Details>
           By {blog.author_id} | {blog.blog_date} | {blog.blog_read_time} |
-          Category: {blog.category}
+          Category: {blog.category} | 100 Views
         </Details>
         <CoverImage src={blog.blog_cover_image} alt="Blog Cover" />
         <Content>{blog.blog_content}</Content>

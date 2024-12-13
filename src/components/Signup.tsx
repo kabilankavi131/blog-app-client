@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Box, Typography, TextField, Button, Divider } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import GoogleButton from "./GoogleButton";
@@ -7,17 +7,14 @@ import { signInWithPopup, auth, provider } from "../firebase";
 import { jwtDecode } from "jwt-decode";
 import { UserContext } from "../context/UserDetailsProvider";
 import { GoogleJwtPayload, UserProfile } from "../interfaces/interface";
-import { registerUser } from "../services/services";
+import { registerUser, persistUserData } from "../services/services";
 
 const SignUpScreen: React.FC = () => {
   const navigate = useNavigate();
-  const [localUserData, setLocalUserData] = useState<UserProfile>({
-    user_id: "",
-    username: "",
-    full_name: "",
-    password: "",
-    email: "",
-    profileImg: "",
+  const userProfile = persistUserData.loadUserData();
+
+  const [localUserData, setLocalUserData] = useState<UserProfile>(() => {
+    return persistUserData.loadUserData();
   });
 
   const context = useContext(UserContext);
@@ -25,6 +22,16 @@ const SignUpScreen: React.FC = () => {
     throw new Error("userContext must be used within a userContext.Provider");
   }
   const { setUser } = context;
+  useEffect(() => {
+    if (userProfile.user_id) {
+      navigate("/home");
+    }
+  }, []);
+  useEffect(() => {
+    if (localUserData.user_id) {
+      setUser(localUserData);
+    }
+  }, [localUserData, setUser]);
 
   const handleInputChange =
     (field: keyof UserProfile) =>
@@ -48,6 +55,7 @@ const SignUpScreen: React.FC = () => {
       };
 
       setLocalUserData(updatedUserData);
+      persistUserData.saveUserData(updatedUserData);
       setUser(updatedUserData);
       await registerUser(updatedUserData);
       navigate("/home");
@@ -60,7 +68,6 @@ const SignUpScreen: React.FC = () => {
     onSuccess: async (credentialResponse) => {
       const token = String(credentialResponse.credential);
       const decoded: GoogleJwtPayload = jwtDecode<GoogleJwtPayload>(token);
-      console.log(decoded);
 
       const updatedUserData: UserProfile = {
         user_id: decoded.sub || "",
@@ -72,6 +79,7 @@ const SignUpScreen: React.FC = () => {
       };
 
       setLocalUserData(updatedUserData);
+      persistUserData.saveUserData(updatedUserData);
       setUser(updatedUserData);
       await registerUser(updatedUserData);
       navigate("/home");
@@ -83,6 +91,10 @@ const SignUpScreen: React.FC = () => {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+    localUserData.user_id = localUserData.email + localUserData.username;
+    localUserData.profileImg =
+      "https://static.vecteezy.com/system/resources/previews/036/885/313/non_2x/blue-profile-icon-free-png.png";
+    persistUserData.saveUserData(localUserData);
     await registerUser(localUserData);
     navigate("/home");
   };
@@ -99,6 +111,13 @@ const SignUpScreen: React.FC = () => {
           fullWidth
           value={localUserData.username}
           onChange={handleInputChange("username")}
+        />
+        <TextField
+          label="Full Name"
+          required
+          fullWidth
+          value={localUserData.full_name}
+          onChange={handleInputChange("full_name")}
         />
         <TextField
           label="Email"
@@ -131,7 +150,6 @@ const SignUpScreen: React.FC = () => {
 
 export default SignUpScreen;
 
-// Extracted styles for better organization
 const styles = {
   container: {
     display: "flex",

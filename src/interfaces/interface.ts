@@ -22,6 +22,7 @@ export interface BlogPopupProps {
   onClose: () => void;
   onSave: () => void;
   onShare: () => void;
+  isDetailPage: boolean;
 }
 
 export interface UserProfile {
