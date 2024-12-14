@@ -16,7 +16,7 @@ const AddBlog: React.FC = () => {
   const getCategories = async () => {
     try {
       const response: Categories[] = await client(
-        "http://localhost:5000/categories",
+        "https://blogspace-app-server.vercel.app/categories",
         "GET",
         ""
       );
@@ -103,7 +103,7 @@ const AddBlog: React.FC = () => {
     });
 
     const response = await client(
-      "http://localhost:5000/blogs/upload",
+      "https://blogspace-app-server.vercel.app/blogs/upload",
       "POST",
       formData
     );

@@ -42,11 +42,15 @@ export const addBlog = async (blog: Blog) => {
   formData.append("password", "Kavi151");
   formData.append("bio", "Nope");
   formData.append("profile_image_blob", blog.blog_cover_image || "");
-  await axios.post("http://localhost:5050/upload", formData);
+  await axios.post("https://blogspace-app-server.vercel.app/blogs/upload", formData);
 };
 
 export const getBlogs = async () => {
-  const blogs = await client("http://localhost:5000/blogs", "GET", {});
+  const blogs = await client(
+    "https://blogspace-app-server.vercel.app/blogs",
+    "GET",
+    {}
+  );
   return blogs;
 };
 
