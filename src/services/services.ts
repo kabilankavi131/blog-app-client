@@ -6,21 +6,27 @@ import client from "../client/client";
 export const getBlogDetails = (id: number): Blog | undefined => {
   const book = blogs.find((_, index) => index == id);
   if (book) return book;
-  const defaultBook = {
-    blog_id: 0,
-    author_id: "",
-    blog_category_id: 0,
-    blog_title: "",
-    blog_content: "",
-    blog_cover_image: "",
-    blog_date: "",
-    blog_read_time: "",
-    tags: [],
-    category: "",
-    likes: 0,
-    is_active: false,
+  const defaultBlog: Blog = {
+    blog_id: 0, // Default ID for the blog
+    author_id: "", // Default author ID
+    blog_category_id: 0, // Default category ID
+    blog_title: "", // Default title
+    blog_description: "", // Default description
+    blog_content: "", // Default content
+    blog_cover_image: null, // Default cover image URL
+    blog_date: "", // Default publication date
+    blog_read_time: "", // Default read time
+    created_at: new Date().toISOString(), // Default creation timestamp
+    created_by: "", // Default creator ID
+    modified_at: new Date().toISOString(), // Default last modified timestamp
+    modified_by: "", // Default last modifier ID
+    is_active: false, // Default active status
+    tags: [], // Default tags (empty array)
+    category: "", // Default category name
+    likes: 0, // Default likes count
   };
-  return defaultBook;
+
+  return defaultBlog;
 };
 
 export const addBlog = async (blog: Blog) => {
@@ -35,12 +41,12 @@ export const addBlog = async (blog: Blog) => {
   formData.append("profile_image", "kabilan.png");
   formData.append("password", "Kavi151");
   formData.append("bio", "Nope");
-  formData.append("profile_image_blob", blog.blog_cover_image);
+  formData.append("profile_image_blob", blog.blog_cover_image || "");
   await axios.post("http://localhost:5050/upload", formData);
 };
 
 export const getBlogs = async () => {
-  const blogs = await client("http://localhost:5050/images", "GET", {});
+  const blogs = await client("http://localhost:5000/blogs", "GET", {});
   return blogs;
 };
 

@@ -1,19 +1,43 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { ThreeDotsButton, BlogPopup } from "./BlogPopup"; // Ensure to import
+import { Blog } from "../interfaces/interface";
+import ReactMarkdown from "react-markdown";
 
 const BlogContainer = styled.div`
-  width: 65%;
+  width: 60%;
   margin: 20px auto;
-  padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 50px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.31);
   background: #ffffff;
   border-radius: 10px;
   color: #333;
   position: relative;
+  pre {
+    // white-space: pre-wrap;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: #1e1e1e;
+    color: #95d2f2;
+    overflow-x: auto;
+    margin: 10px 0px;
+    border-radius: 10px;
+  }
+  code {
+    background-color: rgba(66, 66, 66, 0.39);
+    padding: 1px 10px;
+    border-radius: 5px;
+    position: relative;
+  }
+  pre {
+    code {
+      background-color: transparent;
+    }
+  }
+
   @media (min-width: 300px) and (max-width: 800px) {
-    width: 85%;
+    width: 90%;
   }
 `;
 
@@ -47,7 +71,7 @@ const Details = styled.div`
 
 const CoverImage = styled.img`
   width: 100%;
-  max-height: 400px;
+  max-height: 450px;
   object-fit: cover;
   border-radius: 10px;
   margin-bottom: 20px;
@@ -98,28 +122,10 @@ const LikesCount = styled.span`
   color: #333;
 `;
 
-const blog = {
-  blog_id: 3,
-  author_id: "author_3",
-  blog_category_id: 1,
-  blog_title: "JavaScript ES6 Features",
-  blog_content:
-    "This blog post highlights the essential features introduced in ES6, including let/const, arrow functions, template literals, and more.",
-  blog_cover_image:
-    "https://raw.githubusercontent.com/kabilankavi131/ToDoApp/refs/heads/main/Images/image10.jpg",
-  blog_date: "December 10, 2024",
-  blog_read_time: "7 min read",
-  created_at: "2024-11-10T12:00:00Z",
-  created_by: "author_3",
-  modified_at: "2024-11-11T12:00:00Z",
-  modified_by: "author_3",
-  is_active: true,
-  tags: ["JavaScript", "ES6", "Programming"],
-  category: "Development",
-  likes: 30,
-};
-
 const BlogDetailPage: React.FC = () => {
+  const location = useLocation();
+  const blog: Blog = location.state?.blog;
+
   const [likes, setLikes] = useState(blog.likes);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const navigate = useNavigate();
@@ -142,6 +148,9 @@ const BlogDetailPage: React.FC = () => {
     console.log("Post shared");
   };
   useEffect(() => {
+    document.title = blog.blog_title;
+  }, []);
+  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
         popupRef.current &&
@@ -159,8 +168,6 @@ const BlogDetailPage: React.FC = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isPopupOpen]);
-
-  const { id = "" } = useParams<{ id: string }>();
 
   if (!blog) {
     return <div>Blog not found</div>;
@@ -184,13 +191,26 @@ const BlogDetailPage: React.FC = () => {
         By {blog.author_id} | {blog.blog_date} | {blog.blog_read_time} |
         Category: {blog.category}
       </Details>
-      <CoverImage src={blog.blog_cover_image} alt="Blog Cover" />
-      <Content>{blog.blog_content}</Content>
-      <Tags>
-        {blog.tags.map((tag: string) => (
-          <Tag key={tag}>{tag}</Tag>
-        ))}
-      </Tags>
+      <CoverImage
+        src={`data:image/jpeg;base64,${blog.blog_cover_image}`}
+        alt="Blog Cover"
+      />
+      <Content>
+        <ReactMarkdown>{blog.blog_content}</ReactMarkdown>
+      </Content>
+      {blog.tags ? (
+        <Tags>
+          {blog.tags.map((tag: string) => (
+            <Tag key={tag}>{tag}</Tag>
+          ))}
+        </Tags>
+      ) : (
+        <Tags>
+          {["Technology", "Programming", "Coding"].map((tag) => (
+            <Tag key={tag}>{tag}</Tag>
+          ))}
+        </Tags>
+      )}
       <Footer>
         <LikeButton onClick={handleLike}>Like</LikeButton>
         <LikesCount>{likes} Likes</LikesCount>

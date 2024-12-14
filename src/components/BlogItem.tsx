@@ -13,7 +13,6 @@ const BlogContainer = styled.div`
   border-radius: 10px;
   color: #333;
   position: relative;
-
   &:first-child {
     margin-top: 150px;
   }
@@ -48,6 +47,7 @@ const Content = styled.p`
   width: 100%;
   font-size: 1.2em;
   line-height: 1.6;
+  box-sizing: border-box;
 `;
 
 const Tags = styled.div`
@@ -144,16 +144,21 @@ const BlogItem: React.FC<BlogProps> = ({ blog }) => {
           />
         </div>
       )}
-      <NormalDiv onClick={() => navigate("/blog/0")}>
+      <NormalDiv
+        onClick={() => navigate(`/blog/${blog.blog_id}`, { state: { blog } })}
+      >
         <Title>{blog.blog_title}</Title>
         <Details>
           By {blog.author_id} | {blog.blog_date} | {blog.blog_read_time} |
           Category: {blog.category} | 100 Views
         </Details>
-        <CoverImage src={blog.blog_cover_image} alt="Blog Cover" />
-        <Content>{blog.blog_content}</Content>
+        <CoverImage
+          src={`data:image/jpeg;base64,${blog.blog_cover_image}`}
+          alt="Blog Cover"
+        />
+        <Content>{blog.blog_description}</Content>
         <Tags>
-          {blog.tags.map((tag) => (
+          {blog.tags.map((tag: string) => (
             <Tag key={tag}>{tag}</Tag>
           ))}
         </Tags>

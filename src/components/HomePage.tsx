@@ -14,6 +14,7 @@ const HomePage: React.FC = () => {
     if (!userprofile.user_id) {
       navigate("/");
     }
+    document.title = "Blog App";
   }, []);
   const handleTabChange = (tabKey: number) => {
     setActiveTab(tabKey);

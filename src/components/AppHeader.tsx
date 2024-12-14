@@ -23,7 +23,7 @@ const AppHeader: React.FC = () => {
     if (userProfile.user_id) {
       setUser(userProfile);
     }
-    console.log("User Data in Header:", user);
+    // console.log("User Data in Header:", user);
   }, []);
 
   const toggleMenu = () => {
@@ -46,7 +46,7 @@ const AppHeader: React.FC = () => {
           >
             <img
               style={{ width: "25px" }}
-              src="https://www.svgrepo.com/show/511068/menu-alt-05.svg"
+              src="https://blog-app-resources.vercel.app/Images/menu-alt.svg"
               alt=""
             />
           </button>
@@ -54,7 +54,7 @@ const AppHeader: React.FC = () => {
             <button className="close-button" onClick={toggleMenu}>
               <img
                 style={{ width: "35px" }}
-                src="https://www.svgrepo.com/show/474219/close.svg"
+                src="https://blog-app-resources.vercel.app/Images/close.svg"
                 alt=""
               />
             </button>
@@ -85,22 +85,17 @@ const AppHeader: React.FC = () => {
         >
           <img
             style={{ width: "20px", marginRight: "5px" }}
-            src="https://www.svgrepo.com/show/360946/write.svg"
+            src="https://blog-app-resources.vercel.app/Images/write.svg"
             alt=""
           />
           {""}
           Write
         </button>
         <button notification-count="5" className="notification-btn">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="grey"
-            width="25"
-            height="24"
-          >
-            <path d="M22 19h-8.28a2 2 0 11-3.44 0H2v-1a4.52 4.52 0 011.17-2.83l1-1.17h15.7l1 1.17A4.42 4.42 0 0122 18zM18.21 7.44A6.27 6.27 0 0012 2a6.27 6.27 0 00-6.21 5.44L5 13h14z" />
-          </svg>
+          <img
+            src="https://blog-app-resources.vercel.app/Images/notification-bell.svg"
+            alt="Notification Bell"
+          />
         </button>
         <img
           className="profile-pic"
@@ -116,7 +111,11 @@ const AppHeader: React.FC = () => {
       {/* Write Button For Mobile Screen */}
       <div className="write-btn-mobile">
         <button onClick={() => navigateTo("/addblog")}>
-          <i className="fas fa-pencil-alt"></i>
+          <img
+            style={{ width: "25px" }}
+            src="https://www.svgrepo.com/show/521934/write.svg"
+            alt=""
+          />
         </button>
       </div>
     </header>

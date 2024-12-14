@@ -1,19 +1,25 @@
 import { jwtDecode, JwtPayload } from "jwt-decode";
 
 export interface Blog {
-  blog_id: number;
-  author_id: string;
-  blog_category_id: number;
-  blog_title: string;
-  blog_content: string;
-  blog_cover_image: string;
-  blog_date: string;
-  blog_read_time: string;
-  tags: string[];
-  category: string;
-  likes: number;
-  is_active: boolean;
+  blog_id: number; // Unique identifier for the blog
+  author_id: string; // ID of the author
+  blog_category_id: number; // ID of the blog category
+  blog_title: string; // Title of the blog
+  blog_description: string; // Short description of the blog
+  blog_content: string; // Full content of the blog
+  blog_cover_image: File | null; // URL of the cover image
+  blog_date: string; // Publication date
+  blog_read_time: string; // Estimated read time
+  created_at: string; // Creation timestamp
+  created_by: string; // ID of the creator
+  modified_at: string; // Last modified timestamp
+  modified_by: string; // ID of the last modifier
+  is_active: boolean; // Status indicating if the blog is active
+  tags: string[]; // Array of tags (or null if no tags)
+  category: string; // Category name
+  likes: number; // Number of likes
 }
+
 export interface BlogProps {
   blog: Blog;
 }
@@ -56,4 +62,9 @@ export interface GoogleJwtPayload extends JwtPayload {
   picture: string;
   name: string;
   [key: string]: any;
+}
+
+export interface Categories {
+  category_id: number;
+  category_name: string;
 }
