@@ -133,7 +133,16 @@ const BlogItem: React.FC<BlogProps> = ({ blog }) => {
 
   return (
     <BlogContainer>
-      <ThreeDotsButton onClick={togglePopup}>⋮</ThreeDotsButton>
+      <ThreeDotsButton
+        style={{
+          position: "absolute",
+          top: "10px",
+          right: "10px",
+        }}
+        onClick={togglePopup}
+      >
+        ⋮
+      </ThreeDotsButton>
       {isPopupOpen && (
         <div ref={popupRef}>
           <BlogPopup
@@ -149,7 +158,7 @@ const BlogItem: React.FC<BlogProps> = ({ blog }) => {
       >
         <Title>{blog.blog_title}</Title>
         <Details>
-          By {blog.author_id} | {blog.blog_date} | {blog.blog_read_time} |
+          By {blog.username} | {blog.blog_date} | {blog.blog_read_time} |
           Category: {blog.category} | 100 Views
         </Details>
         <CoverImage

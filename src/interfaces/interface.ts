@@ -2,7 +2,7 @@ import { jwtDecode, JwtPayload } from "jwt-decode";
 
 export interface Blog {
   blog_id: number; // Unique identifier for the blog
-  author_id: string; // ID of the author
+  username: string; // ID of the author
   blog_category_id: number; // ID of the blog category
   blog_title: string; // Title of the blog
   blog_description: string; // Short description of the blog

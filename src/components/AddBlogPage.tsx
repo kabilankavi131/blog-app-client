@@ -4,7 +4,8 @@ import styled from "styled-components";
 import { Blog, Categories } from "../interfaces/interface";
 import { persistUserData } from "../services/services";
 import client from "../client/client";
-import ReactMarkdown from "react-markdown";
+import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 const AddBlog: React.FC = () => {
   const [categories, setCategories] = useState<Categories[]>([]);
@@ -12,6 +13,26 @@ const AddBlog: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const userDetails = persistUserData.loadUserData();
+  const [formState, setFormState] = useState<Blog>({
+    blog_id: 0,
+    username: userDetails.user_id,
+    blog_category_id: 1,
+    blog_title: "",
+    blog_description: "",
+    blog_content: "",
+    blog_cover_image: null,
+    blog_date: "",
+    blog_read_time: "",
+    created_at: new Date().toISOString(),
+    created_by: "",
+    modified_at: new Date().toISOString(),
+    modified_by: "",
+    is_active: false,
+    tags: [],
+    category: "",
+    likes: 0,
+  });
+
   // Fetch categories from the API
   const getCategories = async () => {
     try {
@@ -30,6 +51,14 @@ const AddBlog: React.FC = () => {
     }
   };
 
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+    }
+  };
+
+  // Add the event listener
+  window.addEventListener("keydown", handleKeyDown);
   useEffect(() => {
     if (!userDetails.user_id) {
       navigate("/login");
@@ -37,35 +66,6 @@ const AddBlog: React.FC = () => {
       getCategories();
     }
   }, [userDetails.user_id, navigate]);
-
-  const [formState, setFormState] = useState<Blog>({
-    blog_id: 0,
-    author_id: "admin_1",
-    blog_category_id: 1,
-    blog_title: "",
-    blog_description: "",
-    blog_content: "",
-    blog_cover_image: null,
-    blog_date: "",
-    blog_read_time: "",
-    created_at: new Date().toISOString(),
-    created_by: "",
-    modified_at: new Date().toISOString(),
-    modified_by: "",
-    is_active: false,
-    tags: [],
-    category: "",
-    likes: 0,
-  });
-
-  const openPreview = () => {
-    const element: any = document.getElementById("preview");
-    element.style.display = "block";
-  };
-  const closePreview = () => {
-    const element: any = document.getElementById("preview");
-    element.style.display = "none";
-  };
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -91,6 +91,16 @@ const AddBlog: React.FC = () => {
     }
   };
 
+  const openPreview = () => {
+    const element: HTMLElement | null = document.getElementById("preview");
+    if (element) element.style.display = "block";
+  };
+
+  const closePreview = () => {
+    const element: HTMLElement | null = document.getElementById("preview");
+    if (element) element.style.display = "none";
+  };
+
   const addPost = async (payload: Blog) => {
     const formData = new FormData();
     Object.keys(payload).forEach((key) => {
@@ -102,45 +112,43 @@ const AddBlog: React.FC = () => {
       }
     });
 
-    const response = await client(
-      "https://blogspace-app-server.vercel.app/blogs/upload",
-      "POST",
-      formData
-    );
-    console.log("Post Response: ", response);
+    try {
+      const response = await client(
+        "https://blogspace-app-server.vercel.app/blogs/upload",
+        "POST",
+        formData
+      );
+      console.log("Post Response: ", response);
+    } catch (err) {
+      console.error("Failed to upload blog: ", err);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    addPost(formState);
     console.log("Form Data: ", formState);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      // e.preventDefault(); // Prevent the default action (navigation)
-    }
+    addPost(formState);
   };
 
   if (loading) {
     return (
-      <div style={{ textAlign: "center" }}>
+      <LoadingContainer>
         <img
           style={{ width: "150px" }}
           src="https://blog-app-resources.vercel.app/Images/loading.gif"
-          alt=""
+          alt="Loading"
         />
         <h1>Loading...</h1>
-      </div>
+      </LoadingContainer>
     );
   }
 
   if (error) {
-    return <div>{error}</div>;
+    return <ErrorMessage>{error}</ErrorMessage>;
   }
 
   return (
-    <Form onSubmit={handleSubmit} onKeyDown={handleKeyDown}>
+    <Form onSubmit={handleSubmit}>
       <BackButton onClick={() => navigate("/home")}>← Back</BackButton>
       <h1>Add New Blog</h1>
       <Input
@@ -159,22 +167,7 @@ const AddBlog: React.FC = () => {
       />
       <TextArea
         name="blog_content"
-        placeholder='Write a blog post using Markdown. Follow these tips for a structured and engaging post:
- 1. Title: Start with a clear and captivating title. Example: `# Responsive Web Design Principles`  
- 2. Introduction: Introduce your topic with a brief overview. Example: "Responsive web design ensures websites look great on all devices.  
- 3. Subheadings: Use subheadings (`##`) to organize your content into sections like definitions, principles, or best practices.   
- 4. Code Blocks: Showcase examples using fenced code blocks (```css, ```html).  
- 5. Lists: Highlight tips or steps with bullet points or numbered lists.  
- 6. Underline: Use (---) to add a new underline.   
- 7. Conclusion: End with a summary or call to action to engage your audience.  
-
-Start creating your post! Example:  
-```markdown
-# Responsive Web Design Principles  
-
-Responsive web design ensures websites provide an optimal experience on all devices. This guide covers fluid grids, flexible images, and more!  
-
-        '
+        placeholder="Write a blog post using Markdown..."
         rows={17}
         onChange={handleChange}
         required
@@ -201,7 +194,7 @@ Responsive web design ensures websites provide an optimal experience on all devi
       />
       <Input
         type="text"
-        name="blog_tags"
+        name="tags"
         placeholder="Tags (comma separated)"
         onChange={handleChange}
         required
@@ -221,43 +214,31 @@ Responsive web design ensures websites provide an optimal experience on all devi
           </option>
         ))}
       </Select>
-
       <Preview id="preview">
-        <div
-          onClick={closePreview}
-          style={{
-            position: "absolute",
-            cursor: "pointer",
-            left: "90%",
-            top: "1px",
-            padding: "5px",
-          }}
-          title="Close"
-        >
+        <ClosePreview onClick={closePreview}>
           <img
+            title="Close"
             style={{
               width: "30px",
-              marginBottom: "100px",
+              margin: "10px",
             }}
-            src="https://www.svgrepo.com/show/522801/close-circle.svg"
+            src="https://blog-app-resources.vercel.app/Images/close-square.svg"
             alt=""
           />
-        </div>
-        <ReactMarkdown>{formState.blog_content}</ReactMarkdown>
+        </ClosePreview>
+        <Markdown remarkPlugins={[remarkGfm]}>
+          {formState.blog_content}
+        </Markdown>
       </Preview>
-      <PreviewButton title="Preview Your Content" onClick={openPreview}>
-        Preview
-      </PreviewButton>
-      <Button title="Add Blog" type="submit">
-        Add Blog
-      </Button>
+      <PreviewButton onClick={openPreview}>Preview</PreviewButton>
+      <Button type="submit">Add Blog</Button>
     </Form>
   );
 };
 
 export default AddBlog;
 
-// Styled components
+// Styled Components
 const Form = styled.form`
   width: 60%;
   margin: 20px auto;
@@ -283,7 +264,6 @@ const TextArea = styled.textarea`
   border: 1px solid #ddd;
   border-radius: 5px;
   resize: none;
-  padding: 20px;
   white-space: pre-wrap;
 `;
 
@@ -299,9 +279,15 @@ const Button = styled.button`
   position: relative;
   left: 75%;
 
-  @media (min-width: 300px) and (max-width: 800px) {
-    left: 35%;
+  &:hover {
+    background: #0056b3;
   }
+`;
+
+const BackButton = styled(Button)`
+  left: -10px;
+  background: #007bff;
+
   &:hover {
     background: #0056b3;
   }
@@ -313,50 +299,101 @@ const Preview = styled.div`
   height: 50%;
   position: absolute;
   display: none;
-  padding: 40px 40px;
+  padding: 40px;
   top: 30%;
   left: 50%;
   transform: translate(-50%, -50%);
   overflow-y: scroll;
   color: rgb(113, 207, 196);
   border-radius: 20px;
-  background-color: #1e1e1e;
+  background-color: rgb(30, 30, 30);
+  img {
+    width: 95%;
+    max-height: 400px;
+    margin: 20px;
+  }
+  table {
+    // border-style: solid;
+    border-collapse: collapse;
+    width: 95%;
+    border-width: 1px;
+    margin: 20px;
+  }
+  td,
+  th {
+    border: 1px solid white;
+    padding: 5px;
+  }
+  hr {
+    width: 95%;
+    margin: 20px;
+  }
+  ol,
+  ul {
+    margin: 10px;
+    margin-left: 50px;
+  }
+  pre {
+    margin: 5px;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin: 10px;
+  }
+  p {
+    margin: 10px;
+    line-height: 25px;
+  }
+  code {
+    background-color: rgba(66, 66, 66, 0.39);
+    padding: 2px 10px;
+    border-radius: 5px;
+    width: 90%;
+    position: relative;
+  }
+  pre {
+    border-radius: 10px;
+    padding: 25px;
+    color: #44a3e7;
+    background-color: #0d0d0d;
+    code {
+      width: 90%;
+      background-color: transparent;
+      position: relative;
+    }
+    code::before {
+      position: absolute;
+      content: "Copy Code";
+      background-color: green;
+      padding: 5px;
+      border-radius: 5px;
+      top: -10px;
+      color: white;
+      left: 700px;
+    }
+  }
 `;
 
-const PreviewButton = styled.button`
+const PreviewButton = styled(Button)`
   background: rgb(244, 131, 51);
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1em;
-  margin-top: 10px;
-  position: relative;
-  left: 70%;
-  @media (min-width: 300px) and (max-width: 800px) {
-    left: 20%;
-  }
+
   &:hover {
     background: #0056b3;
   }
 `;
 
-const BackButton = styled.button`
-  position: relative;
-  top: -10px;
-  left: -10px;
-  background: #007bff;
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
+const ClosePreview = styled.div`
+  position: absolute;
   cursor: pointer;
-  font-size: 1em;
-
-  &:hover {
-    background: #0056b3;
-  }
+  left: 90%;
+  top: 1px;
+  padding: 5px;
+  color: #fff;
+  font-size: 1.2em;
 `;
 
 const Select = styled.select`
@@ -365,4 +402,13 @@ const Select = styled.select`
   margin: 10px 0;
   border: 1px solid #ddd;
   border-radius: 5px;
+`;
+
+const LoadingContainer = styled.div`
+  text-align: center;
+`;
+
+const ErrorMessage = styled.div`
+  color: red;
+  text-align: center;
 `;

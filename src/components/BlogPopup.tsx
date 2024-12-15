@@ -4,8 +4,8 @@ import toast, { Toaster } from "react-hot-toast";
 
 const ThreeDotsButton = styled.button`
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 30px;
+  right: 250px;
   background: none;
   border: none;
   font-size: 1.5em;
@@ -15,10 +15,10 @@ const ThreeDotsButton = styled.button`
 const PopupContainer = styled.div`
   position: absolute;
   top: 40px;
-  right: 10px;
+  right: 270px;
   width: 170px;
   background: #fff;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.31);
   border-radius: 5px;
   z-index: 1000;
   padding: 0px;
@@ -56,7 +56,12 @@ const BlogPopup: React.FC<BlogPopupProps> = ({
 }) => {
   const underBuild = () => toast.error("This is currently under development!");
   return (
-    <PopupContainer>
+    <PopupContainer
+      style={{
+        position: "absolute",
+        right: isDetailPage ? "270px" : "10px",
+      }}
+    >
       <div>
         <Toaster />
       </div>
@@ -64,6 +69,10 @@ const BlogPopup: React.FC<BlogPopupProps> = ({
         onClick={() => {
           onSave();
           underBuild();
+        }}
+        style={{
+          position: "relative",
+          marginLeft: "0px",
         }}
       >
         <div
@@ -76,7 +85,9 @@ const BlogPopup: React.FC<BlogPopupProps> = ({
           <img
             style={{
               position: "relative",
-              top: isDetailPage ? "0px" : "-25px",
+              right: isDetailPage ? "20px" : "",
+              top: isDetailPage ? "-15px" : "-25px",
+              width: "20px",
             }}
             src="https://www.svgrepo.com/show/521819/save.svg"
           />
@@ -84,6 +95,10 @@ const BlogPopup: React.FC<BlogPopupProps> = ({
         <span>Save</span>
       </PopupItem>
       <PopupItem
+        style={{
+          position: "relative",
+          marginLeft: "0px",
+        }}
         onClick={() => {
           onShare();
           underBuild();
@@ -99,7 +114,9 @@ const BlogPopup: React.FC<BlogPopupProps> = ({
           <img
             style={{
               position: "relative",
-              top: isDetailPage ? "0px" : "-25px",
+              right: isDetailPage ? "20px" : "",
+              top: isDetailPage ? "-15px" : "-25px",
+              width: "20px",
             }}
             src="https://www.svgrepo.com/show/521832/share-1.svg"
           />

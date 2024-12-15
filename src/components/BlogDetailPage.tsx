@@ -3,8 +3,10 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { ThreeDotsButton, BlogPopup } from "./BlogPopup"; // Ensure to import
 import { Blog } from "../interfaces/interface";
+import toast, { Toaster } from "react-hot-toast";
 import ReactMarkdown from "react-markdown";
-
+import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 const BlogContainer = styled.div`
   width: 60%;
   margin: 20px auto;
@@ -13,9 +15,8 @@ const BlogContainer = styled.div`
   background: #ffffff;
   border-radius: 10px;
   color: #333;
-  position: relative;
+
   pre {
-    // white-space: pre-wrap;
     padding: 20px;
     box-sizing: border-box;
     background-color: #1e1e1e;
@@ -24,15 +25,87 @@ const BlogContainer = styled.div`
     margin: 10px 0px;
     border-radius: 10px;
   }
+
+  img {
+    width: 95%;
+    max-height: 400px;
+    margin: 20px;
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 95%;
+    border-width: 1px;
+    margin: 20px;
+  }
+  td,
+  th {
+    border: 1px solid black;
+    padding: 5px;
+  }
+  hr {
+    width: 95%;
+    margin: 20px;
+  }
+
+  ol,
+  ul {
+    margin: 10px;
+    margin-left: 50px;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin: 10px 0px;
+  }
+
+  div {
+    margin-left: 5px;
+  }
+
+  p {
+    margin: 10px;
+    line-height: 25px;
+  }
+
   code {
     background-color: rgba(66, 66, 66, 0.39);
-    padding: 1px 10px;
+    padding: 2px 10px;
     border-radius: 5px;
+    width: 90%;
     position: relative;
   }
+
   pre {
+    border-radius: 10px;
+    padding: 25px;
+    color: #44a3e7;
+    background-color: #0d0d0d;
+
     code {
+      width: 90%;
       background-color: transparent;
+      position: relative;
+    }
+
+    code::before {
+      content: " Copy";
+      background-image: url(https://blog-app-resources.vercel.app/Images/copy.svg);
+      background-repeat: no-repeat;
+      background-size: 30px 25px;
+      background-position: left center;
+      background-color: #b6b6b6;
+      padding: 5px 5px 5px 25px;
+      border-radius: 5px;
+      position: absolute;
+      top: -10px;
+      left: 680px;
+      cursor: pointer;
+      color: #3b3b3b;
     }
   }
 
@@ -126,6 +199,15 @@ const BlogDetailPage: React.FC = () => {
   const location = useLocation();
   const blog: Blog = location.state?.blog;
 
+  let copiedCount = 0;
+  const codeCopied = () => {
+    if (copiedCount <= 1) {
+      toast.success("Code Copied");
+      copiedCount++;
+    } else {
+      copiedCount = 0;
+    }
+  };
   const [likes, setLikes] = useState(blog.likes);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const navigate = useNavigate();
@@ -149,7 +231,43 @@ const BlogDetailPage: React.FC = () => {
   };
   useEffect(() => {
     document.title = blog.blog_title;
-  }, []);
+
+    const codeBlogs = document.querySelectorAll("code");
+
+    const handleCodeClick = (codeBlog: HTMLElement) => {
+      if (codeBlog.className) {
+        const textToCopy = codeBlog.textContent || "";
+        const tempTextArea = document.createElement("textarea");
+        tempTextArea.value = textToCopy;
+        document.body.appendChild(tempTextArea);
+        tempTextArea.select();
+        tempTextArea.setSelectionRange(0, 99999);
+
+        navigator.clipboard
+          .writeText(tempTextArea.value)
+          .then(() => {
+            codeCopied(); // Ensure this is called only once per click
+          })
+          .catch((err) => console.error("Failed to copy text:", err))
+          .finally(() => {
+            document.body.removeChild(tempTextArea);
+          });
+      }
+    };
+
+    // Attach event listeners
+    codeBlogs.forEach((codeBlog) => {
+      codeBlog.addEventListener("click", () => handleCodeClick(codeBlog));
+    });
+
+    // Cleanup function to remove event listeners
+    return () => {
+      codeBlogs.forEach((codeBlog) => {
+        codeBlog.removeEventListener("click", () => handleCodeClick(codeBlog));
+      });
+    };
+  }, [blog.blog_title]); // Include blog.blog_title to avoid unnecessary re-renders
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -174,6 +292,7 @@ const BlogDetailPage: React.FC = () => {
   }
   return (
     <BlogContainer>
+      <Toaster />
       <BackButton onClick={() => navigate("/home")}>← Back</BackButton>
       <ThreeDotsButton onClick={togglePopup}>⋮</ThreeDotsButton>
       {isPopupOpen && (
@@ -188,7 +307,7 @@ const BlogDetailPage: React.FC = () => {
       )}
       <Title>{blog.blog_title}</Title>
       <Details>
-        By {blog.author_id} | {blog.blog_date} | {blog.blog_read_time} |
+        By {blog.username} | {blog.blog_date} | {blog.blog_read_time} |
         Category: {blog.category}
       </Details>
       <CoverImage
@@ -196,7 +315,7 @@ const BlogDetailPage: React.FC = () => {
         alt="Blog Cover"
       />
       <Content>
-        <ReactMarkdown>{blog.blog_content}</ReactMarkdown>
+        <Markdown remarkPlugins={[remarkGfm]}>{blog.blog_content}</Markdown>
       </Content>
       {blog.tags ? (
         <Tags>

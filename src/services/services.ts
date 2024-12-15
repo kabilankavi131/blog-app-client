@@ -8,7 +8,7 @@ export const getBlogDetails = (id: number): Blog | undefined => {
   if (book) return book;
   const defaultBlog: Blog = {
     blog_id: 0, // Default ID for the blog
-    author_id: "", // Default author ID
+    username: "", // Default author ID
     blog_category_id: 0, // Default category ID
     blog_title: "", // Default title
     blog_description: "", // Default description
@@ -42,7 +42,10 @@ export const addBlog = async (blog: Blog) => {
   formData.append("password", "Kavi151");
   formData.append("bio", "Nope");
   formData.append("profile_image_blob", blog.blog_cover_image || "");
-  await axios.post("https://blogspace-app-server.vercel.app/blogs/upload", formData);
+  await axios.post(
+    "https://blogspace-app-server.vercel.app/blogs/upload",
+    formData
+  );
 };
 
 export const getBlogs = async () => {
@@ -62,7 +65,10 @@ export const loginUser = async (email: string, password: string) => {
   console.log(formData);
 
   try {
-    await axios.post("http://localhost:5050/loginuser", formData);
+    await axios.post(
+      "https://blogspace-app-server.vercel.app/loginuser",
+      formData
+    );
     // navigate("/home");
   } catch (error) {
     console.error("Error during user registration:", error);
@@ -73,7 +79,7 @@ export const registerUser = async (userData: UserProfile) => {
   console.log("User Details : ", userData);
 
   const formData = new FormData();
-  formData.append("user_id", userData.email);
+  formData.append("user_id", userData.user_id);
   formData.append("username", userData.email);
   formData.append("full_name", userData.full_name);
   formData.append("email", userData.email);
@@ -85,7 +91,10 @@ export const registerUser = async (userData: UserProfile) => {
   console.log(userData);
 
   try {
-    await axios.post("http://localhost:5050/users/upload", formData);
+    await axios.post(
+      "https://blogspace-app-server.vercel.app/users/upload",
+      formData
+    );
     // navigate("/home");
   } catch (error) {
     console.error("Error during user registration:", error);
