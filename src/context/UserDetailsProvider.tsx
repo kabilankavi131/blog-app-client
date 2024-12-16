@@ -11,7 +11,7 @@ export const UserContext = createContext<UserContextType | undefined>(
 );
 
 interface UserDetailsProviderProps {
-  children: ReactNode;
+  children: ReactNode | any;
 }
 
 export const UserDetailsProvider: React.FC<UserDetailsProviderProps> = ({

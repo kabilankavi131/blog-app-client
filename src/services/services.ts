@@ -65,12 +65,13 @@ export const loginUser = async (email: string, password: string) => {
   console.log(formData);
 
   try {
-    await axios.post(
+    const respose = await axios.post(
       "https://blogspace-app-server.vercel.app/loginuser",
       formData
     );
-    // navigate("/home");
+    return respose;
   } catch (error) {
+    return 500;
     console.error("Error during user registration:", error);
   }
 };
@@ -80,24 +81,25 @@ export const registerUser = async (userData: UserProfile) => {
 
   const formData = new FormData();
   formData.append("user_id", userData.user_id);
-  formData.append("username", userData.email);
+  formData.append("username", userData.username);
   formData.append("full_name", userData.full_name);
   formData.append("email", userData.email);
   formData.append("password", userData.password); // Consider changing this to a user input for better security
-
   const imageResponse = await fetch(userData.profileImg || "");
   const imageBlob = await imageResponse.blob();
   formData.append("profile_image_blob", imageBlob);
-  console.log(userData);
+  console.log("Form Data: ", userData);
+  console.log("Blob Conversion: ", imageResponse);
 
   try {
-    await axios.post(
+    const response = await axios.post(
       "https://blogspace-app-server.vercel.app/users/upload",
       formData
     );
-    // navigate("/home");
+    return response;
   } catch (error) {
     console.error("Error during user registration:", error);
+    return 400;
   }
 };
 

@@ -1,14 +1,19 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserDetailsProvider";
 import { UserContextType, UserProfile } from "../interfaces/interface";
 import UserProfilePopup from "./UserProfilePopup";
 import { persistUserData } from "../services/services";
+import toast, { Toaster } from "react-hot-toast";
 
 const AppHeader: React.FC = () => {
   const navigateTo = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+
+  // Refs to track the sidebar and popup
+  const sidebarRef = useRef<HTMLDivElement | null>(null);
+  const popupRef = useRef<HTMLDivElement | null>(null);
 
   const userProfile: UserProfile = persistUserData.loadUserData();
   const context = useContext(UserContext) as UserContextType | undefined;
@@ -23,7 +28,6 @@ const AppHeader: React.FC = () => {
     if (userProfile.user_id) {
       setUser(userProfile);
     }
-    // console.log("User Data in Header:", user);
   }, []);
 
   const toggleMenu = () => {
@@ -34,8 +38,35 @@ const AppHeader: React.FC = () => {
     setIsPopupOpen(!isPopupOpen);
   };
 
+  // Close menu and popup when clicking outside of them
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        sidebarRef.current &&
+        !sidebarRef.current.contains(event.target as Node) &&
+        isOpen
+      ) {
+        setIsOpen(false);
+      }
+
+      if (
+        popupRef.current &&
+        !popupRef.current.contains(event.target as Node) &&
+        isPopupOpen
+      ) {
+        setIsPopupOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen, isPopupOpen]);
+
   return (
     <header className="app-header">
+      <Toaster />
       <div className="header-left">
         <div className="hamburgerMenu">
           <button
@@ -45,12 +76,13 @@ const AppHeader: React.FC = () => {
             onClick={toggleMenu}
           >
             <img
+              id="hamburgermenu"
               style={{ width: "25px" }}
               src="https://blog-app-resources.vercel.app/Images/menu-alt.svg"
               alt=""
             />
           </button>
-          <div className={`sidebar ${isOpen ? "open" : ""}`}>
+          <div ref={sidebarRef} className={`sidebar ${isOpen ? "open" : ""}`}>
             <button className="close-button" onClick={toggleMenu}>
               <img
                 style={{ width: "35px" }}
@@ -59,8 +91,8 @@ const AppHeader: React.FC = () => {
               />
             </button>
             <ul>
-              <li>
-                <a onClick={() => navigateTo("/")}>Home</a>
+              <li onClick={() => navigateTo("/")}>
+                <a>Home</a>
               </li>
               <li>
                 <a>About</a>
@@ -71,11 +103,16 @@ const AppHeader: React.FC = () => {
               <li>
                 <a>Contact</a>
               </li>
+              <li onClick={() => navigateTo("/aboutdeveloper")}>
+                <a>Developer Info</a>
+              </li>
             </ul>
           </div>
         </div>
         <div className="header-title">
-          <h1>Blog Space</h1>
+          <h1 style={{ cursor: "pointer" }} onClick={() => navigateTo("/")}>
+            Blog Space
+          </h1>
         </div>
       </div>
       <div className="header-right">
@@ -95,6 +132,7 @@ const AppHeader: React.FC = () => {
           <img
             src="https://blog-app-resources.vercel.app/Images/notification-bell.svg"
             alt="Notification Bell"
+            onClick={() => toast.error("This is currently under development!")}
           />
         </button>
         <img
@@ -105,7 +143,9 @@ const AppHeader: React.FC = () => {
           onClick={togglePopup}
         />
         {isPopupOpen && (
-          <UserProfilePopup navigate={navigateTo} onClose={togglePopup} />
+          <div ref={popupRef}>
+            <UserProfilePopup navigate={navigateTo} onClose={togglePopup} />
+          </div>
         )}
       </div>
       {/* Write Button For Mobile Screen */}

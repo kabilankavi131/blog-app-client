@@ -8,6 +8,7 @@ import { GoogleJwtPayload, UserProfile } from "../interfaces/interface";
 import { jwtDecode } from "jwt-decode";
 import { loginUser, persistUserData } from "../services/services";
 import { useContext, useEffect, useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
 
 const LoginScreen: React.FC = () => {
   const navigate = useNavigate();
@@ -75,11 +76,26 @@ const LoginScreen: React.FC = () => {
 
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
-    loginUser(email, password);
+    const response: any = await loginUser(email, password);
+    console.log("Response Message", response);
+
+    if (response.status == 200) {
+      toast.success("Login Success");
+      setTimeout(() => {
+        navigate("/home");
+      }, 2000);
+    } else {
+      toast.error("Invalid Credentials!");
+    }
   };
 
   return (
     <Box sx={styles.container}>
+      {
+        <div>
+          <Toaster />
+        </div>
+      }
       <Typography variant="h4" fontWeight="bold" sx={{ mb: 3 }}>
         Log In to Blog Space
       </Typography>

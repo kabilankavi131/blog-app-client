@@ -13,6 +13,7 @@ import SignUpScreen from "./components/Signup";
 import { GoogleOAuthProvider } from "@react-oauth/google"; // Import GoogleOAuthProvider
 import UserDetailsProvider from "./context/UserDetailsProvider";
 import Favourites from "./components/Favourite";
+import DeveloperAboutPage from "./components/DeveloperAboutPage";
 
 const App: React.FC = () => {
   return (
@@ -31,6 +32,7 @@ const App: React.FC = () => {
             <Route path="/login" element={<LoginScreen />} />
             <Route path="/signup" element={<SignUpScreen />} />
             <Route path="/fav" element={<Favourites />} />
+            <Route path="aboutdeveloper" element={<DeveloperAboutPage />} />
             {/* Add UserProfile route */}
           </Routes>
         </Router>

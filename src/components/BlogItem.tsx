@@ -6,7 +6,7 @@ import { BlogProps } from "../interfaces/interface";
 
 const BlogContainer = styled.div`
   width: 90%;
-  margin: 20px auto;
+  margin: 20px 0px;
   padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   background: #ffffff;
@@ -15,6 +15,9 @@ const BlogContainer = styled.div`
   position: relative;
   &:first-child {
     margin-top: 150px;
+  }
+  @media (min-width: 300px) and (max-width: 800px) {
+    left: -2px;
   }
 `;
 

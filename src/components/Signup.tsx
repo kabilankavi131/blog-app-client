@@ -1,122 +1,85 @@
+// SignUpScreen.tsx
 import React, { useContext, useState, useEffect } from "react";
 import { Box, Typography, TextField, Button, Divider } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import GoogleButton from "./GoogleButton";
-import { useGoogleOneTapLogin } from "@react-oauth/google";
-import { signInWithPopup, auth, provider } from "../firebase";
-import { jwtDecode } from "jwt-decode";
+import { useGoogleSignIn, useGoogleOneTap } from "../hooks/useGoogleAuth";
 import { UserContext } from "../context/UserDetailsProvider";
-import { GoogleJwtPayload, UserProfile } from "../interfaces/interface";
-import { registerUser, persistUserData } from "../services/services";
+import { useForm } from "../hooks/useForm";
+import { persistUserData, registerUser } from "../services/services";
+import toast, { Toaster } from "react-hot-toast";
+import styles from "../styles/SignUpStyles";
 
 const SignUpScreen: React.FC = () => {
   const navigate = useNavigate();
-  const userProfile = persistUserData.loadUserData();
-
-  const [localUserData, setLocalUserData] = useState<UserProfile>(() => {
-    return persistUserData.loadUserData();
-  });
-
   const context = useContext(UserContext);
+
   if (!context) {
-    throw new Error("userContext must be used within a userContext.Provider");
+    throw new Error("UserContext must be used within a UserContext.Provider");
   }
+
   const { setUser } = context;
-  useEffect(() => {
-    if (userProfile.user_id) {
-      navigate("/home");
-    }
-  }, []);
-  useEffect(() => {
-    if (localUserData.user_id) {
-      setUser(localUserData);
-    }
-  }, [localUserData, setUser]);
-
-  const handleInputChange =
-    (field: keyof UserProfile) =>
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      setLocalUserData((prevData) => ({
-        ...prevData,
-        [field]: event.target.value,
-      }));
-    };
-
-  const handleGoogleSignUp = async () => {
-    try {
-      const result = await signInWithPopup(auth, provider);
-      const updatedUserData: UserProfile = {
-        user_id: result.user.uid,
-        username: result.user.displayName || "",
-        full_name: result.user.displayName || "",
-        email: result.user.email || "",
-        password: result.user.uid + result.user.email,
-        profileImg: result.user.photoURL || "",
-      };
-
-      setLocalUserData(updatedUserData);
-      persistUserData.saveUserData(updatedUserData);
-      setUser(updatedUserData);
-      await registerUser(updatedUserData);
-      navigate("/home");
-    } catch (error) {
-      console.error("Error during Google sign-up:", error);
-    }
-  };
-
-  useGoogleOneTapLogin({
-    onSuccess: async (credentialResponse) => {
-      const token = String(credentialResponse.credential);
-      const decoded: GoogleJwtPayload = jwtDecode<GoogleJwtPayload>(token);
-
-      const updatedUserData: UserProfile = {
-        user_id: decoded.sub || "",
-        full_name: decoded.given_name,
-        username: decoded.given_name || "",
-        email: decoded.email || "",
-        password: decoded.sub + decoded.email,
-        profileImg: decoded.picture,
-      };
-
-      setLocalUserData(updatedUserData);
-      persistUserData.saveUserData(updatedUserData);
-      setUser(updatedUserData);
-      await registerUser(updatedUserData);
-      navigate("/home");
-    },
-    onError: () => {
-      console.error("One Tap Login Failed");
-    },
+  const { formData, handleInputChange } = useForm({
+    user_id: "",
+    username: "",
+    full_name: "",
+    email: "",
+    profileImg: "", // Change to string to store URL instead of Blob
+    password: "",
   });
 
-  const handleSubmit = async (event: React.FormEvent) => {
+  useEffect(() => {
+    const userProfile = persistUserData.loadUserData();
+    if (userProfile?.user_id) {
+      navigate("/home");
+    }
+  }, [navigate]);
+
+  const handleSignUp = async (event: React.FormEvent) => {
     event.preventDefault();
-    localUserData.user_id = localUserData.email + localUserData.username;
-    localUserData.profileImg =
+    const userId = formData.email + formData.username;
+    const profileImg =
       "https://static.vecteezy.com/system/resources/previews/036/885/313/non_2x/blue-profile-icon-free-png.png";
-    persistUserData.saveUserData(localUserData);
-    await registerUser(localUserData);
-    navigate("/home");
+    formData.user_id = userId;
+    formData.profileImg = profileImg;
+    console.log("Form Data: ", formData);
+    try {
+      const response: any = await registerUser(formData);
+      if (response.status === 201) {
+        toast.success("Sign Up Success");
+        persistUserData.saveUserData(formData);
+        setUser(response.data);
+        navigate("/home");
+      } else {
+        toast.error("Try a different email or username!");
+      }
+    } catch (error) {
+      toast.error("Server Error Occurred!");
+    }
   };
+
+  const handleGoogleSignUp = useGoogleSignIn({ setUser, navigate });
+  useGoogleOneTap({ setUser, navigate });
 
   return (
     <Box sx={styles.container}>
+      <Toaster />
       <Typography variant="h4" fontWeight="bold" sx={{ mb: 3 }}>
         Sign Up for Blog Space
       </Typography>
-      <Box component="form" onSubmit={handleSubmit} sx={styles.form}>
+      <Box component="form" onSubmit={handleSignUp} sx={styles.form}>
         <TextField
           label="User Name"
           required
           fullWidth
-          value={localUserData.username}
+          value={formData.username}
           onChange={handleInputChange("username")}
         />
         <TextField
           label="Full Name"
           required
           fullWidth
-          value={localUserData.full_name}
+          value={formData.full_name}
           onChange={handleInputChange("full_name")}
         />
         <TextField
@@ -124,16 +87,16 @@ const SignUpScreen: React.FC = () => {
           type="email"
           required
           fullWidth
-          value={localUserData.email}
+          value={formData.email}
           onChange={handleInputChange("email")}
         />
         <TextField
           label="Password"
           type="password"
-          value={localUserData.password}
-          onChange={handleInputChange("password")}
           required
           fullWidth
+          value={formData.password}
+          onChange={handleInputChange("password")}
         />
         <Button variant="contained" type="submit" sx={styles.signUpButton}>
           Sign Up
@@ -149,30 +112,3 @@ const SignUpScreen: React.FC = () => {
 };
 
 export default SignUpScreen;
-
-const styles = {
-  container: {
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    height: "100vh",
-    padding: 3,
-    backgroundColor: "#e3f2fd",
-  },
-  form: {
-    display: "flex",
-    flexDirection: "column",
-    width: 300,
-    gap: 2,
-  },
-  signUpButton: {
-    backgroundColor: "#4caf50",
-  },
-  loginText: {
-    marginTop: 2,
-    textAlign: "center",
-    cursor: "pointer",
-    color: "#1976d2",
-  },
-};

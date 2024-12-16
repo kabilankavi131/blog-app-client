@@ -20,9 +20,12 @@ const PopupContainer = styled.div`
   background: #fff;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.31);
   border-radius: 5px;
-  z-index: 1000;
+  z-index: 90;
   padding: 0px;
-`;
+  @media (min-width: 300px) and (max-width: 800px) {
+    left:40%;
+  }
+  `;
 
 const PopupItem = styled.div`
   display: flex;

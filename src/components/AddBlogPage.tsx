@@ -4,18 +4,78 @@ import styled from "styled-components";
 import { Blog, Categories } from "../interfaces/interface";
 import { persistUserData } from "../services/services";
 import client from "../client/client";
-import Markdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import toast, { Toaster } from "react-hot-toast";
+import ReactQuill, { Quill } from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 const AddBlog: React.FC = () => {
+  const navigate = useNavigate();
   const [categories, setCategories] = useState<Categories[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const navigate = useNavigate();
+  const [sanitizedContent, setSanitizedContent] = useState<string>("");
+
+  const modules = {
+    toolbar: [
+      [{ header: [1, 2, false] }], // Header options
+      [{ font: [] }], // Font options
+      ["bold", "italic", "underline", "strike"], // Formatting options
+      [{ list: "ordered" }, { list: "bullet" }], // List options
+      ["link", "image", "video"], // Insert link, image, video
+      [{ color: [] }, { background: [] }], // Color options
+      [{ align: [] }], // Alignment options
+      ["clean"], // Clear formatting button
+      ["code-block"], // Code block option
+      ["formula"], // Formula option
+      ["table"], // Table option
+      ["blockquote"], // Blockquote option
+      ["fullscreen"], // Fullscreen option
+    ],
+    clipboard: {
+      matchVisual: true, // Match the visual format when pasting
+    },
+    history: {
+      delay: 200, // Delay for history tracking
+      maxStack: 500, // Maximum stack size
+      userOnly: true, // Only track user actions
+    },
+    keyboard: {
+      bindings: {
+        // Custom keyboard shortcuts can be defined here
+      },
+    },
+  };
+
+  // Define font options
+  // Define font options
+  const Font = Quill.import("formats/font");
+  Font.whitelist = [
+    "sans-serif",
+    "serif",
+    "monospace",
+    "Arial",
+    "Georgia",
+    "Impact",
+    "Tahoma",
+    "Times New Roman",
+    "Verdana",
+    "Courier New", // Added
+    "Comic Sans MS", // Added
+    "Lucida Console", // Added
+    "Trebuchet MS", // Added
+    "Palatino Linotype", // Added
+    "Garamond", // Added
+    "Century Gothic", // Added
+    "Segoe UI", // Added
+    "Helvetica", // Added
+  ]; // Add any other fonts you want to include
+  Quill.register(Font, true);
+
   const userDetails = persistUserData.loadUserData();
+
   const [formState, setFormState] = useState<Blog>({
     blog_id: 0,
-    username: userDetails.user_id,
+    username: userDetails?.user_id || "",
     blog_category_id: 1,
     blog_title: "",
     blog_description: "",
@@ -33,7 +93,7 @@ const AddBlog: React.FC = () => {
     likes: 0,
   });
 
-  // Fetch categories from the API
+  // Fetch categories
   const getCategories = async () => {
     try {
       const response: Categories[] = await client(
@@ -42,30 +102,34 @@ const AddBlog: React.FC = () => {
         ""
       );
       setCategories(response);
-      console.log("Categories: ", response);
     } catch (err) {
       setError("Failed to load categories");
-      console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleKeyDown = (event: KeyboardEvent) => {
-    if (event.key === "Enter") {
-      event.preventDefault();
-    }
-  };
-
-  // Add the event listener
-  window.addEventListener("keydown", handleKeyDown);
   useEffect(() => {
-    if (!userDetails.user_id) {
-      navigate("/login");
-    } else {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+      }
+    };
+    const user = persistUserData.loadUserData();
+    console.log("User in write", user);
+    if (!user.user_id) {
+      navigate("/");
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    if (userDetails?.user_id) {
       getCategories();
     }
-  }, [userDetails.user_id, navigate]);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [userDetails?.user_id]);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -92,25 +156,27 @@ const AddBlog: React.FC = () => {
   };
 
   const openPreview = () => {
-    const element: HTMLElement | null = document.getElementById("preview");
-    if (element) element.style.display = "block";
+    const element = document.getElementById("preview");
+    if (element instanceof HTMLElement) {
+      element.style.visibility = "visible";
+      element.innerHTML = formState.blog_content;
+    }
   };
 
   const closePreview = () => {
-    const element: HTMLElement | null = document.getElementById("preview");
-    if (element) element.style.display = "none";
+    const element = document.getElementById("preview");
+    if (element instanceof HTMLElement) {
+      element.style.visibility = "hidden";
+    }
   };
 
   const addPost = async (payload: Blog) => {
     const formData = new FormData();
     Object.keys(payload).forEach((key) => {
       const value = (payload as any)[key];
-      if (key === "blog_cover_image") {
-        formData.append(key, value);
-      } else {
-        formData.append(key, value.toString());
-      }
+      formData.append(key, value instanceof File ? value : value.toString());
     });
+    const loader = toast.loading("Blog Uploading");
 
     try {
       const response = await client(
@@ -118,37 +184,50 @@ const AddBlog: React.FC = () => {
         "POST",
         formData
       );
-      console.log("Post Response: ", response);
+      console.log(response);
+      toast.dismiss(loader);
+      if (response.message) {
+        toast.success("Blog Posted Successfully!");
+        setTimeout(() => navigate("/"), 2000);
+      } else {
+        toast.error("Failed to upload blog");
+      }
     } catch (err) {
-      console.error("Failed to upload blog: ", err);
+      return err;
     }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form Data: ", formState);
-    addPost(formState);
+    if (!formState.blog_content) {
+      toast.error("Please enter blog content");
+    } else {
+      addPost(formState);
+    }
   };
 
-  if (loading) {
-    return (
-      <LoadingContainer>
-        <img
-          style={{ width: "150px" }}
-          src="https://blog-app-resources.vercel.app/Images/loading.gif"
-          alt="Loading"
-        />
-        <h1>Loading...</h1>
-      </LoadingContainer>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <LoadingContainer>
+  //       <img
+  //         style={{ width: "150px" }}
+  //         src="https://blog-app-resources.vercel.app/Images/loading.gif"
+  //         alt="Loading"
+  //       />
+  //       <h1>Loading...</h1>
+  //     </LoadingContainer>
+  //   );
+  // }
 
-  if (error) {
-    return <ErrorMessage>{error}</ErrorMessage>;
-  }
+  // if (error) {
+  //   return <ErrorMessage>{error}</ErrorMessage>;
+  // }
 
   return (
     <Form onSubmit={handleSubmit}>
+      <div>
+        <Toaster />
+      </div>
       <BackButton onClick={() => navigate("/home")}>← Back</BackButton>
       <h1>Add New Blog</h1>
       <Input
@@ -165,12 +244,17 @@ const AddBlog: React.FC = () => {
         onChange={handleChange}
         required
       />
-      <TextArea
-        name="blog_content"
-        placeholder="Write a blog post using Markdown..."
-        rows={17}
-        onChange={handleChange}
-        required
+      <ReactQuill
+        modules={modules}
+        theme="snow"
+        className="blogContent"
+        placeholder="Write your blog..."
+        onChange={(content) => {
+          setFormState((prev) => ({
+            ...prev,
+            blog_content: content,
+          }));
+        }}
       />
       <Input
         type="file"
@@ -214,31 +298,21 @@ const AddBlog: React.FC = () => {
           </option>
         ))}
       </Select>
-      <Preview id="preview">
-        <ClosePreview onClick={closePreview}>
-          <img
-            title="Close"
-            style={{
-              width: "30px",
-              margin: "10px",
-            }}
-            src="https://blog-app-resources.vercel.app/Images/close-square.svg"
-            alt=""
-          />
-        </ClosePreview>
-        <Markdown remarkPlugins={[remarkGfm]}>
-          {formState.blog_content}
-        </Markdown>
-      </Preview>
-      <PreviewButton onClick={openPreview}>Preview</PreviewButton>
+      <div className="original" id="preview">
+        <button id="btn" onClick={closePreview}>
+          Close
+        </button>
+      </div>
+      {/* <Preview id="preview"></Preview> */}
+      {/* <PreviewButton onClick={openPreview}>Preview</PreviewButton> */}
       <Button type="submit">Add Blog</Button>
     </Form>
   );
 };
 
+// Styled Components...
 export default AddBlog;
 
-// Styled Components
 const Form = styled.form`
   width: 60%;
   margin: 20px auto;
@@ -247,6 +321,41 @@ const Form = styled.form`
   background: #ffffff;
   border-radius: 10px;
   position: relative;
+  .blogContent {
+    position: relative;
+    width: 98%;
+    margin-bottom: 80px;
+    height: 300px;
+  }
+  img {
+    width: 90%;
+    margin: 20px;
+  }
+  .original {
+    padding: 20px;
+    position: absolute;
+    top: 0;
+    width: 60%;
+    display: none;
+    height: 500px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    background-color: gray;
+    color: white;
+  }
+  pre {
+    background-color: #0d0d0d;
+    color: #007bff;
+    width: 100%;
+    padding: 100%;
+    overflow-y: scroll;
+  }
+  pre code {
+    width: 90%;
+  }
+  @media (min-width: 300px) and (max-width: 800px) {
+    width: 85%;
+  }
 `;
 
 const Input = styled.input`
@@ -278,9 +387,13 @@ const Button = styled.button`
   margin-top: 10px;
   position: relative;
   left: 75%;
+  margin: 3px;
 
   &:hover {
     background: #0056b3;
+  }
+  @media (min-width: 300px) and (max-width: 800px) {
+    left: 35%;
   }
 `;
 
@@ -291,16 +404,23 @@ const BackButton = styled(Button)`
   &:hover {
     background: #0056b3;
   }
+  @media (min-width: 300px) and (max-width: 800px) {
+    top: -15px;
+  }
 `;
-
+const MarkDown = styled.div`
+  position: absolute;
+  width: 90%;
+  max-height: 300px;
+`;
 const Preview = styled.div`
   z-index: 1000;
-  width: 100%;
-  height: 50%;
-  position: absolute;
+  width: 80%;
+  height: 500px;
+  position: relative;
   display: none;
   padding: 40px;
-  top: 30%;
+  top: 40%;
   left: 50%;
   transform: translate(-50%, -50%);
   overflow-y: scroll;
@@ -313,9 +433,8 @@ const Preview = styled.div`
     margin: 20px;
   }
   table {
-    // border-style: solid;
     border-collapse: collapse;
-    width: 95%;
+    width: 80%;
     border-width: 1px;
     margin: 20px;
   }
@@ -325,7 +444,7 @@ const Preview = styled.div`
     padding: 5px;
   }
   hr {
-    width: 95%;
+    width: 80%;
     margin: 20px;
   }
   ol,
@@ -345,10 +464,12 @@ const Preview = styled.div`
     margin: 10px;
   }
   p {
+    width: 90%;
     margin: 10px;
     line-height: 25px;
   }
   code {
+    width: 80%;
     background-color: rgba(66, 66, 66, 0.39);
     padding: 2px 10px;
     border-radius: 5px;
@@ -358,6 +479,7 @@ const Preview = styled.div`
   pre {
     border-radius: 10px;
     padding: 25px;
+    width: 80%;
     color: #44a3e7;
     background-color: #0d0d0d;
     code {
@@ -366,38 +488,56 @@ const Preview = styled.div`
       position: relative;
     }
     code::before {
-      position: absolute;
+      position: relative;
       content: "Copy Code";
       background-color: green;
       padding: 5px;
       border-radius: 5px;
       top: -10px;
       color: white;
-      left: 700px;
+      right: -80%;
+    }
+  }
+  @media (min-width: 300px) and (max-width: 800px) {
+    width: 100%;
+    position: relative;
+    top: -500px;
+    overflow-x: hidden;
+    height: 500px;
+    padding: 10px;
+    pre {
+      width: 80%;
+      height: "100px";
+      background-color: gray;
+      overflow-y: scroll;
     }
   }
 `;
 
 const PreviewButton = styled(Button)`
   background: rgb(244, 131, 51);
-
+  margin: 5px;
   &:hover {
     background: #0056b3;
+  }
+  @media (min-width: 300px) and (max-width: 800px) {
+    left: 30%;
   }
 `;
 
 const ClosePreview = styled.div`
-  position: absolute;
-  cursor: pointer;
-  left: 90%;
-  top: 1px;
-  padding: 5px;
-  color: #fff;
-  font-size: 1.2em;
+  position: fixed;
+  top: 100px;
+  z-index: 2000;
+  background-color: orange;
+  right: 10px;
+  @media (min-width: 300px) and (max-width: 800px) {
+    left: 70%;
+  }
 `;
 
 const Select = styled.select`
-  width: 100%;
+  width: 98%;
   padding: 10px;
   margin: 10px 0;
   border: 1px solid #ddd;

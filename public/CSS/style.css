@@ -174,7 +174,9 @@ nav {
   border-bottom: 1px solid #ddd;
   position: sticky;
   top: 0px;
-  z-index: 1;
+  padding-top: 0px;
+  margin-top: 0px;
+  z-index: 100;
   margin-bottom: 30px;
 }
 
@@ -385,7 +387,7 @@ nav {
 
 /* Hamburger menu */
 .hamburgerMenu {
-  position: relative;
+  position: fixed;
   z-index: 1000;
 }
 .hamburger-button {
@@ -396,7 +398,7 @@ nav {
   position: fixed;
   top: 16px;
   left: 16px;
-  z-index: 1000;
+  z-index: 100;
 }
 .hamburger-button-close {
   visibility: hidden;
@@ -555,4 +557,114 @@ nav {
   color: #666;
   text-align: center;
   margin: 50px 0;
+}
+
+/* Blog Editor CSS */
+
+.ql-syntax {
+  background-color: #00796b;
+}
+
+iframe {
+  width: 96%;
+  height: 300px;
+  margin: 2%;
+}
+
+/* Developer About Page CSS */
+
+.about-page {
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
+  color: #333;
+  width: 70%;
+  padding: 3% 15%;
+  min-height: 100vh;
+}
+
+.about-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.about-header h1 {
+  font-size: 2.5rem;
+  color: #0078d7;
+}
+
+.about-header p {
+  font-size: 1.2rem;
+  color: #555;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.about-section {
+  margin-bottom: 40px;
+}
+
+.about-section h2 {
+  font-size: 1.8rem;
+  color: #0078d7;
+  margin-bottom: 15px;
+}
+
+.about-card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.about-card p {
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.highlight {
+  font-weight: bold;
+  color: #0078d7;
+}
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 15px;
+}
+
+.skill-item {
+  background: #0078d7;
+  color: #fff;
+  text-align: center;
+  padding: 10px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.contact-links {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  margin-top: 15px;
+}
+
+.contact-links a {
+  padding: 10px 15px;
+  background: #0078d7;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 5px;
+  text-align: center;
+  flex: 1;
+  margin: 5px;
+}
+
+.contact-links a:hover {
+  background: #005bb5;
+}
+
+.about-footer {
+  text-align: center;
+  margin-top: 30px;
+  color: #777;
 }

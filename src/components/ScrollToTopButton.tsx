@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 
 const ScrollToTopButton: React.FC = () => {
+  let hamburgermenu: any;
   const [isVisible, setIsVisible] = useState(false);
-
   const handleScroll = () => {
     if (window.scrollY > 300) {
       setIsVisible(true);
     } else {
       setIsVisible(false);
+      hamburgermenu.style.display = "block";
     }
   };
 
@@ -16,7 +17,11 @@ const ScrollToTopButton: React.FC = () => {
   };
 
   useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
+    hamburgermenu = document.getElementById("hamburgermenu");
+    window.addEventListener("scroll", () => {
+      hamburgermenu.style.display = "none";
+      handleScroll();
+    });
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };

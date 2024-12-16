@@ -4,9 +4,9 @@ import styled from "styled-components";
 import { ThreeDotsButton, BlogPopup } from "./BlogPopup"; // Ensure to import
 import { Blog } from "../interfaces/interface";
 import toast, { Toaster } from "react-hot-toast";
-import ReactMarkdown from "react-markdown";
-import Markdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import { marked } from "marked";
+import { persistUserData } from "../services/services";
+import HomePage from "./HomePage";
 const BlogContainer = styled.div`
   width: 60%;
   margin: 20px auto;
@@ -61,6 +61,7 @@ const BlogContainer = styled.div`
   h5,
   h6 {
     margin: 10px 0px;
+    line-height: 45px;
   }
 
   div {
@@ -110,13 +111,38 @@ const BlogContainer = styled.div`
   }
 
   @media (min-width: 300px) and (max-width: 800px) {
-    width: 90%;
+    width: 95%;
+    padding: 10px;
+    .popup {
+      top: 30px;
+      left: 90%;
+    }
+    ol,
+    ul {
+      margin: 10px;
+      margin-left: 0px;
+    }
+    .blogCoverImage {
+      margin: 0px;
+      width: 100%;
+    }
+    table {
+      margin: 0px;
+      padding: 0px;
+    }
+    tr,
+    td,
+    th {
+      border: 1px solid black;
+      padding: 0px;
+      margin: 0px;
+    }
   }
 `;
 
 const BackButton = styled.button`
   position: relative;
-  top: -5px;
+  top: -30px;
   left: 0px;
   background: #007bff;
   color: #fff;
@@ -128,6 +154,10 @@ const BackButton = styled.button`
 
   &:hover {
     background: #0056b3;
+  }
+  @media (min-width: 300px) and (max-width: 800px) {
+    top: 5px;
+    margin-bottom: 10px;
   }
 `;
 
@@ -197,8 +227,27 @@ const LikesCount = styled.span`
 
 const BlogDetailPage: React.FC = () => {
   const location = useLocation();
-  const blog: Blog = location.state?.blog;
-
+  const navigate = useNavigate();
+  const defaultBlog: Blog = {
+    blog_id: 0,
+    username: "",
+    blog_category_id: 0,
+    blog_title: "Untitled Blog",
+    blog_description: "This is a default blog description.",
+    blog_content: "Start writing your blog content here...",
+    blog_cover_image: null,
+    blog_date: Date(),
+    blog_read_time: "0 min",
+    created_at: Date(),
+    created_by: "system",
+    modified_at: Date(),
+    modified_by: "system",
+    is_active: true,
+    tags: [],
+    category: "General",
+    likes: 0,
+  };
+  const blog: Blog = location.state?.blog || defaultBlog;
   let copiedCount = 0;
   const codeCopied = () => {
     if (copiedCount <= 1) {
@@ -208,9 +257,22 @@ const BlogDetailPage: React.FC = () => {
       copiedCount = 0;
     }
   };
+
+  useEffect(() => {
+    const blocContainer = document.getElementById("blogContent");
+    if (blocContainer) {
+      const htmlValue: any = marked(blog.blog_content) || "";
+      blocContainer.innerHTML = htmlValue;
+    }
+    const userprofile = persistUserData.loadUserData();
+    if (!userprofile.user_id) {
+      navigate("/");
+      return;
+    }
+  }, []);
+
   const [likes, setLikes] = useState(blog.likes);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const navigate = useNavigate();
   const popupRef = useRef<HTMLDivElement>(null);
   const handleLike = () => {
     setLikes(likes + 1);
@@ -290,11 +352,31 @@ const BlogDetailPage: React.FC = () => {
   if (!blog) {
     return <div>Blog not found</div>;
   }
+  console.log("Blog: ", blog);
+
+  if (blog.blog_category_id == 0) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          placeItems: "center",
+        }}
+        onLoad={() => {
+          navigate("/");
+        }}
+      >
+        <h1>Go to Home Page</h1>
+      </div>
+    );
+  }
   return (
     <BlogContainer>
       <Toaster />
       <BackButton onClick={() => navigate("/home")}>← Back</BackButton>
-      <ThreeDotsButton onClick={togglePopup}>⋮</ThreeDotsButton>
+      <ThreeDotsButton className="popup" onClick={togglePopup}>
+        ⋮
+      </ThreeDotsButton>
       {isPopupOpen && (
         <div ref={popupRef}>
           <BlogPopup
@@ -311,12 +393,11 @@ const BlogDetailPage: React.FC = () => {
         Category: {blog.category}
       </Details>
       <CoverImage
+        className="blogCoverImage"
         src={`data:image/jpeg;base64,${blog.blog_cover_image}`}
         alt="Blog Cover"
       />
-      <Content>
-        <Markdown remarkPlugins={[remarkGfm]}>{blog.blog_content}</Markdown>
-      </Content>
+      <Content id="blogContent"></Content>
       {blog.tags ? (
         <Tags>
           {blog.tags.map((tag: string) => (
@@ -337,5 +418,4 @@ const BlogDetailPage: React.FC = () => {
     </BlogContainer>
   );
 };
-
 export default BlogDetailPage;
