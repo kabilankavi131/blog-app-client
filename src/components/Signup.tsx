@@ -44,12 +44,16 @@ const SignUpScreen: React.FC = () => {
     formData.profileImg = profileImg;
     console.log("Form Data: ", formData);
     try {
+      const loader = toast.loading("Signing Up");
       const response: any = await registerUser(formData);
+      toast.dismiss(loader);
       if (response.status === 201) {
-        toast.success("Sign Up Success");
+        toast.success("Signed Up Successfully");
         persistUserData.saveUserData(formData);
-        setUser(response.data);
-        navigate("/home");
+        setTimeout(() => {
+          setUser(response.data);
+          navigate("/home"); // Navigate to home page after successful sign up
+        }, 2000);
       } else {
         toast.error("Try a different email or username!");
       }

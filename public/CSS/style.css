@@ -580,6 +580,10 @@ iframe {
   width: 70%;
   padding: 3% 15%;
   min-height: 100vh;
+  @media (min-width: 300px) and (max-width: 800px) {
+    width: 90%;
+    padding: 5%;
+  }
 }
 
 .about-header {
@@ -667,4 +671,10 @@ iframe {
   text-align: center;
   margin-top: 30px;
   color: #777;
+}
+
+.popupParentContainer {
+  position: fixed;
+  top: 0%;
+  left: 100%;
 }

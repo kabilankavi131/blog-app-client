@@ -143,7 +143,7 @@ const AppHeader: React.FC = () => {
           onClick={togglePopup}
         />
         {isPopupOpen && (
-          <div ref={popupRef}>
+          <div className="popupParentContainer" ref={popupRef}>
             <UserProfilePopup navigate={navigateTo} onClose={togglePopup} />
           </div>
         )}

@@ -8,7 +8,7 @@ import { persistUserData } from "../services/services";
 // Styled Components
 const PopupContainer = styled.div`
   position: absolute;
-  top: 50px;
+  top: 62px;
   right: 20px;
   width: 200px;
   background: #fff;

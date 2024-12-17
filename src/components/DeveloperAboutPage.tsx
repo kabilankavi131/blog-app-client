@@ -8,14 +8,18 @@ const DeveloperAboutPage: React.FC = () => {
       <div
         onClick={() => navigate("/")}
         style={{
-          width: "50px",
-          padding: "15px",
-          borderRadius: "10px",
-          backgroundColor: "skyblue",
+          width: "30px",
+          position: "fixed",
+          top: "30px",
+          left: "3%",
           cursor: "pointer",
         }}
       >
-        Back
+        <img
+          style={{ width: "30px" }}
+          src="https://www.svgrepo.com/show/18507/back-button.svg"
+          alt=""
+        />
       </div>
       {/* Header Section */}
       <header className="about-header">
@@ -52,7 +56,7 @@ const DeveloperAboutPage: React.FC = () => {
               and user-friendly navigation. It showcases my skills in modern web
               technologies like{" "}
               <span className="highlight">
-                React, TypeScript, PostgreSQL, MySQL, and Node.js
+                React, TypeScript, PostgreSQL, MySQL, Node.js and Firebase
               </span>
               . Whether you're here for tech articles or tutorials, my aim is to
               deliver quality content and insights.
@@ -93,15 +97,15 @@ const DeveloperAboutPage: React.FC = () => {
             </p>
             <div className="contact-links">
               <a
-                href="https://www.linkedin.com/in/your-profile"
+                href="https://www.linkedin.com/in/kabilankavi131"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 LinkedIn
               </a>
-              <a href="mailto:your.email@example.com">Email</a>
+              <a href="mailto:kabilankavi131@gmail.com">Email</a>
               <a
-                href="https://github.com/your-github-profile"
+                href="https://github.com/kabilankavi131"
                 target="_blank"
                 rel="noopener noreferrer"
               >
