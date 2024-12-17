@@ -8,7 +8,9 @@ const ScrollToTopButton: React.FC = () => {
       setIsVisible(true);
     } else {
       setIsVisible(false);
-      hamburgermenu.style.display = "block";
+      if (hamburgermenu != null) {
+        hamburgermenu.style.display = "block";
+      }
     }
   };
 
@@ -18,8 +20,11 @@ const ScrollToTopButton: React.FC = () => {
 
   useEffect(() => {
     hamburgermenu = document.getElementById("hamburgermenu");
+    console.log(hamburgermenu);
     window.addEventListener("scroll", () => {
-      hamburgermenu.style.display = "none";
+      if (hamburgermenu != null) {
+        hamburgermenu.style.display = "none";
+      }
       handleScroll();
     });
     return () => {
@@ -36,7 +41,13 @@ const ScrollToTopButton: React.FC = () => {
           alt="Scroll to Top"
           className="scrollToTop"
           onClick={handleScrollToTop}
-          style={{ cursor: "pointer" }}
+          style={{
+            width: "30px",
+            height: "30px",
+            position: "fixed",
+            bottom: "100px",
+            right: "10%",
+          }}
         />
       )}
     </div>

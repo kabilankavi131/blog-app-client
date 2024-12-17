@@ -108,11 +108,11 @@ const BlogItem: React.FC<BlogProps> = ({ blog }) => {
   };
 
   const handleSave = () => {
-    console.log("Post saved");
+    // console.log("Post saved");
   };
 
   const handleShare = () => {
-    console.log("Post shared");
+    // console.log("Post shared");
   };
 
   useEffect(() => {

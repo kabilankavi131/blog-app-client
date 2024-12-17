@@ -6,7 +6,7 @@ import { useGoogleOneTapLogin } from "@react-oauth/google";
 import { UserContext } from "../context/UserDetailsProvider";
 import { GoogleJwtPayload, UserProfile } from "../interfaces/interface";
 import { jwtDecode } from "jwt-decode";
-import { loginUser, persistUserData } from "../services/services";
+import { loginUser, persistUserData, registerUser } from "../services/services";
 import { useContext, useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 
@@ -44,6 +44,7 @@ const LoginScreen: React.FC = () => {
 
       setUser(updatedUserData);
       persistUserData.saveUserData(updatedUserData);
+      registerUser(updatedUserData);
       navigate("/home");
     } catch (error) {
       console.error("Error during Google login:", error);
@@ -66,7 +67,7 @@ const LoginScreen: React.FC = () => {
 
       setUser(updatedUserData);
       persistUserData.saveUserData(updatedUserData);
-      loginUser(updatedUserData.email, updatedUserData.password);
+      registerUser(updatedUserData);
       navigate("/home");
     },
     onError: () => {
@@ -76,11 +77,22 @@ const LoginScreen: React.FC = () => {
 
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
+    const loader = toast.loading("Verifying credentials... Please stand by.");
     const response: any = await loginUser(email, password);
-    console.log("Response Message", response);
-
+    // console.log("Response Message", response);
+    toast.dismiss(loader);
     if (response.status == 200) {
+      const userData: UserProfile = {
+        user_id: response.data.user.user_id,
+        username: response.data.user.username,
+        full_name: response.data.user.username,
+        email: email,
+        password: password,
+        profileImg:
+          "https://static.vecteezy.com/system/resources/previews/036/885/313/non_2x/blue-profile-icon-free-png.png",
+      };
       toast.success("Login Success");
+      persistUserData.saveUserData(userData);
       setTimeout(() => {
         navigate("/home");
       }, 2000);

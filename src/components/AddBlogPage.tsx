@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { Blog, Categories } from "../interfaces/interface";
-import { persistUserData } from "../services/services";
+import { getDateUptoYear, persistUserData } from "../services/services";
 import client from "../client/client";
 import toast, { Toaster } from "react-hot-toast";
 import ReactQuill, { Quill } from "react-quill";
@@ -11,9 +11,6 @@ import "react-quill/dist/quill.snow.css";
 const AddBlog: React.FC = () => {
   const navigate = useNavigate();
   const [categories, setCategories] = useState<Categories[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [sanitizedContent, setSanitizedContent] = useState<string>("");
 
   const modules = {
     toolbar: [
@@ -32,22 +29,18 @@ const AddBlog: React.FC = () => {
       ["fullscreen"], // Fullscreen option
     ],
     clipboard: {
-      matchVisual: true, // Match the visual format when pasting
+      matchVisual: true,
     },
     history: {
-      delay: 200, // Delay for history tracking
-      maxStack: 500, // Maximum stack size
-      userOnly: true, // Only track user actions
+      delay: 200,
+      maxStack: 500,
+      userOnly: true,
     },
     keyboard: {
-      bindings: {
-        // Custom keyboard shortcuts can be defined here
-      },
+      bindings: {},
     },
   };
 
-  // Define font options
-  // Define font options
   const Font = Quill.import("formats/font");
   Font.whitelist = [
     "sans-serif",
@@ -103,9 +96,10 @@ const AddBlog: React.FC = () => {
       );
       setCategories(response);
     } catch (err) {
-      setError("Failed to load categories");
+      console.log("Error while getting categories : ", err);
+
+      return err;
     } finally {
-      setLoading(false);
     }
   };
 
@@ -116,7 +110,7 @@ const AddBlog: React.FC = () => {
       }
     };
     const user = persistUserData.loadUserData();
-    console.log("User in write", user);
+    // console.log("User in write", user);
     if (!user.user_id) {
       navigate("/");
     }
@@ -155,21 +149,6 @@ const AddBlog: React.FC = () => {
     }
   };
 
-  const openPreview = () => {
-    const element = document.getElementById("preview");
-    if (element instanceof HTMLElement) {
-      element.style.visibility = "visible";
-      element.innerHTML = formState.blog_content;
-    }
-  };
-
-  const closePreview = () => {
-    const element = document.getElementById("preview");
-    if (element instanceof HTMLElement) {
-      element.style.visibility = "hidden";
-    }
-  };
-
   const addPost = async (payload: Blog) => {
     const formData = new FormData();
     Object.keys(payload).forEach((key) => {
@@ -177,14 +156,14 @@ const AddBlog: React.FC = () => {
       formData.append(key, value instanceof File ? value : value.toString());
     });
     const loader = toast.loading("Blog Uploading");
-
+    formData.append("blog_date", getDateUptoYear());
     try {
       const response = await client(
         "https://blogspace-app-server.vercel.app/blogs/upload",
         "POST",
         formData
       );
-      console.log(response);
+
       toast.dismiss(loader);
       if (response.message) {
         toast.success("Blog Posted Successfully!");
@@ -205,23 +184,6 @@ const AddBlog: React.FC = () => {
       addPost(formState);
     }
   };
-
-  // if (loading) {
-  //   return (
-  //     <LoadingContainer>
-  //       <img
-  //         style={{ width: "150px" }}
-  //         src="https://blog-app-resources.vercel.app/Images/loading.gif"
-  //         alt="Loading"
-  //       />
-  //       <h1>Loading...</h1>
-  //     </LoadingContainer>
-  //   );
-  // }
-
-  // if (error) {
-  //   return <ErrorMessage>{error}</ErrorMessage>;
-  // }
 
   return (
     <Form onSubmit={handleSubmit}>
@@ -264,13 +226,6 @@ const AddBlog: React.FC = () => {
       />
       <Input
         type="text"
-        name="blog_date"
-        placeholder="Date (e.g., December 10, 2024)"
-        onChange={handleChange}
-        required
-      />
-      <Input
-        type="text"
         name="blog_read_time"
         placeholder="Read Time (e.g., 7 min read)"
         onChange={handleChange}
@@ -298,13 +253,6 @@ const AddBlog: React.FC = () => {
           </option>
         ))}
       </Select>
-      <div className="original" id="preview">
-        <button id="btn" onClick={closePreview}>
-          Close
-        </button>
-      </div>
-      {/* <Preview id="preview"></Preview> */}
-      {/* <PreviewButton onClick={openPreview}>Preview</PreviewButton> */}
       <Button type="submit">Add Blog</Button>
     </Form>
   );
@@ -331,18 +279,7 @@ const Form = styled.form`
     width: 90%;
     margin: 20px;
   }
-  .original {
-    padding: 20px;
-    position: absolute;
-    top: 0;
-    width: 60%;
-    display: none;
-    height: 500px;
-    overflow-x: hidden;
-    overflow-y: scroll;
-    background-color: gray;
-    color: white;
-  }
+
   pre {
     background-color: #0d0d0d;
     color: #007bff;
@@ -355,6 +292,9 @@ const Form = styled.form`
   }
   @media (min-width: 300px) and (max-width: 800px) {
     width: 85%;
+    .blogContent {
+      margin-bottom: 120px;
+    }
   }
 `;
 
@@ -364,16 +304,6 @@ const Input = styled.input`
   margin: 10px 0;
   border: 1px solid #ddd;
   border-radius: 5px;
-`;
-
-const TextArea = styled.textarea`
-  width: 95%;
-  padding: 10px;
-  margin: 10px 0;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  resize: none;
-  white-space: pre-wrap;
 `;
 
 const Button = styled.button`
@@ -408,133 +338,6 @@ const BackButton = styled(Button)`
     top: -15px;
   }
 `;
-const MarkDown = styled.div`
-  position: absolute;
-  width: 90%;
-  max-height: 300px;
-`;
-const Preview = styled.div`
-  z-index: 1000;
-  width: 80%;
-  height: 500px;
-  position: relative;
-  display: none;
-  padding: 40px;
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  overflow-y: scroll;
-  color: rgb(113, 207, 196);
-  border-radius: 20px;
-  background-color: rgb(30, 30, 30);
-  img {
-    width: 95%;
-    max-height: 400px;
-    margin: 20px;
-  }
-  table {
-    border-collapse: collapse;
-    width: 80%;
-    border-width: 1px;
-    margin: 20px;
-  }
-  td,
-  th {
-    border: 1px solid white;
-    padding: 5px;
-  }
-  hr {
-    width: 80%;
-    margin: 20px;
-  }
-  ol,
-  ul {
-    margin: 10px;
-    margin-left: 50px;
-  }
-  pre {
-    margin: 5px;
-  }
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    margin: 10px;
-  }
-  p {
-    width: 90%;
-    margin: 10px;
-    line-height: 25px;
-  }
-  code {
-    width: 80%;
-    background-color: rgba(66, 66, 66, 0.39);
-    padding: 2px 10px;
-    border-radius: 5px;
-    width: 90%;
-    position: relative;
-  }
-  pre {
-    border-radius: 10px;
-    padding: 25px;
-    width: 80%;
-    color: #44a3e7;
-    background-color: #0d0d0d;
-    code {
-      width: 90%;
-      background-color: transparent;
-      position: relative;
-    }
-    code::before {
-      position: relative;
-      content: "Copy Code";
-      background-color: green;
-      padding: 5px;
-      border-radius: 5px;
-      top: -10px;
-      color: white;
-      right: -80%;
-    }
-  }
-  @media (min-width: 300px) and (max-width: 800px) {
-    width: 100%;
-    position: relative;
-    top: -500px;
-    overflow-x: hidden;
-    height: 500px;
-    padding: 10px;
-    pre {
-      width: 80%;
-      height: "100px";
-      background-color: gray;
-      overflow-y: scroll;
-    }
-  }
-`;
-
-const PreviewButton = styled(Button)`
-  background: rgb(244, 131, 51);
-  margin: 5px;
-  &:hover {
-    background: #0056b3;
-  }
-  @media (min-width: 300px) and (max-width: 800px) {
-    left: 30%;
-  }
-`;
-
-const ClosePreview = styled.div`
-  position: fixed;
-  top: 100px;
-  z-index: 2000;
-  background-color: orange;
-  right: 10px;
-  @media (min-width: 300px) and (max-width: 800px) {
-    left: 70%;
-  }
-`;
 
 const Select = styled.select`
   width: 98%;
@@ -542,13 +345,4 @@ const Select = styled.select`
   margin: 10px 0;
   border: 1px solid #ddd;
   border-radius: 5px;
-`;
-
-const LoadingContainer = styled.div`
-  text-align: center;
-`;
-
-const ErrorMessage = styled.div`
-  color: red;
-  text-align: center;
 `;

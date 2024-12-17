@@ -4,12 +4,16 @@ import toast, { Toaster } from "react-hot-toast";
 
 const ThreeDotsButton = styled.button`
   position: absolute;
-  top: 30px;
-  right: 250px;
+  top: 20px;
+  left: 83%;
   background: none;
   border: none;
   font-size: 1.5em;
   cursor: pointer;
+  z-index: 1000;
+  @media (min-width: 300px) and (max-width: 800px) {
+    left: 85%;
+  }
 `;
 
 const PopupContainer = styled.div`
@@ -23,9 +27,9 @@ const PopupContainer = styled.div`
   z-index: 90;
   padding: 0px;
   @media (min-width: 300px) and (max-width: 800px) {
-    left:40%;
+    left: 40%;
   }
-  `;
+`;
 
 const PopupItem = styled.div`
   display: flex;
@@ -88,8 +92,8 @@ const BlogPopup: React.FC<BlogPopupProps> = ({
           <img
             style={{
               position: "relative",
-              right: isDetailPage ? "20px" : "",
-              top: isDetailPage ? "-15px" : "-25px",
+
+              top: isDetailPage ? "0px" : "-25px",
               width: "20px",
             }}
             src="https://www.svgrepo.com/show/521819/save.svg"
@@ -117,8 +121,7 @@ const BlogPopup: React.FC<BlogPopupProps> = ({
           <img
             style={{
               position: "relative",
-              right: isDetailPage ? "20px" : "",
-              top: isDetailPage ? "-15px" : "-25px",
+              top: isDetailPage ? "0px" : "-25px",
               width: "20px",
             }}
             src="https://www.svgrepo.com/show/521832/share-1.svg"

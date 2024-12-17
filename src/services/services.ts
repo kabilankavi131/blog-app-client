@@ -62,7 +62,7 @@ export const loginUser = async (email: string, password: string) => {
     email: email,
     password: password,
   };
-  console.log(formData);
+  // console.log(formData);
 
   try {
     const respose = await axios.post(
@@ -77,7 +77,7 @@ export const loginUser = async (email: string, password: string) => {
 };
 
 export const registerUser = async (userData: UserProfile) => {
-  console.log("User Details : ", userData);
+  // console.log("User Details : ", userData);
 
   const formData = new FormData();
   formData.append("user_id", userData.user_id);
@@ -88,8 +88,8 @@ export const registerUser = async (userData: UserProfile) => {
   const imageResponse = await fetch(userData.profileImg || "");
   const imageBlob = await imageResponse.blob();
   formData.append("profile_image_blob", imageBlob);
-  console.log("Form Data: ", userData);
-  console.log("Blob Conversion: ", imageResponse);
+  // console.log("Form Data: ", userData);
+  // console.log("Blob Conversion: ", imageResponse);
 
   try {
     const response = await axios.post(
@@ -141,3 +141,14 @@ export const persistUserData = {
     }
   },
 };
+
+export function getDateUptoYear() {
+  const options: any = {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  };
+  const today = new Date();
+  return today.toLocaleDateString("en-US", options)[1];
+}

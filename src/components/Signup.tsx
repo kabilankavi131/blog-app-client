@@ -42,7 +42,7 @@ const SignUpScreen: React.FC = () => {
       "https://static.vecteezy.com/system/resources/previews/036/885/313/non_2x/blue-profile-icon-free-png.png";
     formData.user_id = userId;
     formData.profileImg = profileImg;
-    console.log("Form Data: ", formData);
+    // console.log("Form Data: ", formData);
     try {
       const loader = toast.loading("Signing Up");
       const response: any = await registerUser(formData);

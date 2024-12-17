@@ -6,7 +6,7 @@ import { Blog } from "../interfaces/interface";
 import toast, { Toaster } from "react-hot-toast";
 import { marked } from "marked";
 import { persistUserData } from "../services/services";
-import HomePage from "./HomePage";
+import ScrollToTopButton from "./ScrollToTopButton";
 const BlogContainer = styled.div`
   width: 60%;
   margin: 20px auto;
@@ -27,9 +27,9 @@ const BlogContainer = styled.div`
   }
 
   img {
-    width: 95%;
+    width: 100%;
     max-height: 400px;
-    margin: 20px;
+    margin: 20px 0px;
   }
 
   table {
@@ -112,6 +112,7 @@ const BlogContainer = styled.div`
 
   @media (min-width: 300px) and (max-width: 800px) {
     width: 95%;
+    top: 10%;
     padding: 10px;
     .popup {
       top: 30px;
@@ -137,27 +138,6 @@ const BlogContainer = styled.div`
       padding: 0px;
       margin: 0px;
     }
-  }
-`;
-
-const BackButton = styled.button`
-  position: relative;
-  top: -30px;
-  left: 0px;
-  background: #007bff;
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1em;
-
-  &:hover {
-    background: #0056b3;
-  }
-  @media (min-width: 300px) and (max-width: 800px) {
-    top: 5px;
-    margin-bottom: 10px;
   }
 `;
 
@@ -284,12 +264,12 @@ const BlogDetailPage: React.FC = () => {
 
   const handleSave = () => {
     // Logic to save the post
-    console.log("Post saved");
+    // console.log("Post saved");
   };
 
   const handleShare = () => {
     // Logic to share the post
-    console.log("Post shared");
+    // console.log("Post shared");
   };
   useEffect(() => {
     document.title = blog.blog_title;
@@ -352,70 +332,114 @@ const BlogDetailPage: React.FC = () => {
   if (!blog) {
     return <div>Blog not found</div>;
   }
-  console.log("Blog: ", blog);
+  // console.log("Blog: ", blog);
 
   if (blog.blog_category_id == 0) {
     return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          placeItems: "center",
-        }}
-        onLoad={() => {
-          navigate("/");
-        }}
-      >
+      <div style={{ textAlign: "center" }}>
         <h1>Go to Home Page</h1>
+        <div
+          style={{
+            width: "90%",
+            display: "block",
+            border: "1px solid black",
+            margin: "5%",
+          }}
+        ></div>
+        <img
+          onClick={() => navigate("/")}
+          style={{ width: "50px" }}
+          src="https://www.svgrepo.com/show/529027/home-1.svg"
+          alt=""
+        />
       </div>
     );
   }
+  const isMobile = window.innerWidth <= 600;
   return (
-    <BlogContainer>
-      <Toaster />
-      <BackButton onClick={() => navigate("/home")}>← Back</BackButton>
-      <ThreeDotsButton className="popup" onClick={togglePopup}>
-        ⋮
-      </ThreeDotsButton>
-      {isPopupOpen && (
-        <div ref={popupRef}>
-          <BlogPopup
-            onClose={togglePopup}
-            onSave={handleSave}
-            onShare={handleShare}
-            isDetailPage={true}
-          />
-        </div>
-      )}
-      <Title>{blog.blog_title}</Title>
-      <Details>
-        By {blog.username} | {blog.blog_date} | {blog.blog_read_time} |
-        Category: {blog.category}
-      </Details>
-      <CoverImage
-        className="blogCoverImage"
-        src={`data:image/jpeg;base64,${blog.blog_cover_image}`}
-        alt="Blog Cover"
-      />
-      <Content id="blogContent"></Content>
-      {blog.tags ? (
-        <Tags>
-          {blog.tags.map((tag: string) => (
-            <Tag key={tag}>{tag}</Tag>
-          ))}
-        </Tags>
-      ) : (
-        <Tags>
-          {["Technology", "Programming", "Coding"].map((tag) => (
-            <Tag key={tag}>{tag}</Tag>
-          ))}
-        </Tags>
-      )}
-      <Footer>
-        <LikeButton onClick={handleLike}>Like</LikeButton>
-        <LikesCount>{likes} Likes</LikesCount>
-      </Footer>
-    </BlogContainer>
+    <div>
+      <div
+        className="blogHeader"
+        style={{
+          width: "90%",
+          height: "30px",
+          position: "sticky",
+          top: "0px",
+          zIndex: "1000",
+          backdropFilter: "blur(10px) saturate(153%)",
+          WebkitBackdropFilter: "blur(0px) saturate(153%)",
+          backgroundColor: "rgba(255, 255, 255, 0)",
+          borderRadius: "12px",
+          border: "1px solid rgba(209, 213, 219, 0.3)",
+          padding: "20px",
+        }}
+      >
+        <img
+          className="backButton"
+          src="https://www.svgrepo.com/show/18507/back-button.svg"
+          alt=""
+          onClick={() => navigate("/home")}
+          style={{
+            width: "30px",
+            cursor: "pointer",
+            position: "relative",
+            top: "10px",
+            left: "10%",
+          }}
+        />
+        <ThreeDotsButton
+          style={{
+            left: isMobile ? "85%" : "87%",
+          }}
+          className="popup"
+          onClick={togglePopup}
+        >
+          ⋮
+        </ThreeDotsButton>
+        {isPopupOpen && (
+          <div ref={popupRef}>
+            <BlogPopup
+              onClose={togglePopup}
+              onSave={handleSave}
+              onShare={handleShare}
+              isDetailPage={true}
+            />
+          </div>
+        )}
+      </div>
+      <BlogContainer>
+        <Toaster />
+        <Title>{blog.blog_title}</Title>
+        <Details>
+          By {blog.username} | {blog.blog_date} | {blog.blog_read_time} |
+          Category: {blog.category}
+        </Details>
+        <CoverImage
+          className="blogCoverImage"
+          src={`data:image/jpeg;base64,${blog.blog_cover_image}`}
+          alt="Blog Cover"
+        />
+        <Content id="blogContent"></Content>
+        {blog.tags ? (
+          <Tags>
+            {blog.tags.map((tag: string) => (
+              <Tag key={tag}>{tag}</Tag>
+            ))}
+          </Tags>
+        ) : (
+          <Tags>
+            {["Technology", "Programming", "Coding"].map((tag) => (
+              <Tag key={tag}>{tag}</Tag>
+            ))}
+          </Tags>
+        )}
+        <Footer>
+          <LikeButton onClick={handleLike}>Like</LikeButton>
+          <LikesCount>{likes} Likes</LikesCount>
+        </Footer>
+        <ScrollToTopButton />
+      </BlogContainer>
+    </div>
   );
 };
 export default BlogDetailPage;
