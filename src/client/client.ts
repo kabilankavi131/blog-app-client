@@ -9,7 +9,7 @@ const client = async (
     method: method,
     url: endpoint,
     headers: {
-      "Content-Type": "application/json",
+      "Content-Type": "multipart/form-data",
     },
     data: payload,
   };
