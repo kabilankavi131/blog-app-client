@@ -56,6 +56,21 @@ export const getBlogs = async () => {
   );
   return blogs;
 };
+export const getBlogsByCategories = async (categories: any) => {
+  try {
+    const blogs = await client(
+      "https://blogspace-app-server.vercel.app/blogsbycategories",
+      "POST",
+      {
+        categoryIds: categories,
+      }
+    );
+    return blogs;
+  } catch (error: any) {
+    console.error("Error fetching blogs by categories:", error.message);
+    throw new Error("Failed to fetch blogs by categories."); // Propagate the error for handling
+  }
+};
 
 export const loginUser = async (email: string, password: string) => {
   const formData = {

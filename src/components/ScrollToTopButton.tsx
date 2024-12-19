@@ -20,7 +20,6 @@ const ScrollToTopButton: React.FC = () => {
 
   useEffect(() => {
     hamburgermenu = document.getElementById("hamburgermenu");
-    console.log(hamburgermenu);
     window.addEventListener("scroll", () => {
       if (hamburgermenu != null) {
         hamburgermenu.style.display = "none";
@@ -35,20 +34,20 @@ const ScrollToTopButton: React.FC = () => {
   return (
     <div className="scrolltotop-container">
       {isVisible && (
-        <img
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="25"
+          height="25"
+          viewBox="0 0 16 16"
+          fill="none"
           id="scrollToTopBtn"
-          src="https://blog-app-resources.vercel.app/Images/scrolltotop.png"
-          alt="Scroll to Top"
           className="scrollToTop"
           onClick={handleScrollToTop}
-          style={{
-            width: "30px",
-            height: "30px",
-            position: "fixed",
-            bottom: "100px",
-            right: "10%",
-          }}
-        />
+        >
+          <g fill="var(--primary-text)">
+            <path d="M2.5 2.5a.75.75 0 010-1.5H13a.75.75 0 010 1.5H2.5zM2.985 9.795a.75.75 0 001.06-.03L7 6.636v7.614a.75.75 0 001.5 0V6.636l2.955 3.129a.75.75 0 001.09-1.03l-4.25-4.5a.75.75 0 00-1.09 0l-4.25 4.5a.75.75 0 00.03 1.06z" />
+          </g>
+        </svg>
       )}
     </div>
   );

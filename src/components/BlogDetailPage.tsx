@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
-import { ThreeDotsButton, BlogPopup } from "./BlogPopup"; // Ensure to import
+import { BlogPopup } from "./BlogPopup"; // Ensure to import
 import { Blog } from "../interfaces/interface";
 import toast, { Toaster } from "react-hot-toast";
 import { marked } from "marked";
@@ -11,10 +11,10 @@ const BlogContainer = styled.div`
   width: 60%;
   margin: 20px auto;
   padding: 50px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.31);
-  background: #ffffff;
+  box-shadow: 0 4px 8px var(--border-color);
+  background: var(--background);
   border-radius: 10px;
-  color: #333;
+  color: var(--primary-text);
 
   pre {
     padding: 20px;
@@ -28,8 +28,8 @@ const BlogContainer = styled.div`
 
   img {
     width: 100%;
-    max-height: 400px;
-    margin: 20px 0px;
+    height: auto;
+    // object-fit: contain;
   }
 
   table {
@@ -52,6 +52,10 @@ const BlogContainer = styled.div`
   ul {
     margin: 10px;
     margin-left: 50px;
+    background: var(--background);
+  }
+  li {
+    background: transparent;
   }
 
   h1,
@@ -63,7 +67,9 @@ const BlogContainer = styled.div`
     margin: 10px 0px;
     line-height: 45px;
   }
-
+  strong {
+    background: transparent;
+  }
   div {
     margin-left: 5px;
   }
@@ -123,10 +129,6 @@ const BlogContainer = styled.div`
       margin: 10px;
       margin-left: 0px;
     }
-    .blogCoverImage {
-      margin: 0px;
-      width: 100%;
-    }
     table {
       margin: 0px;
       padding: 0px;
@@ -147,17 +149,17 @@ const Title = styled.h1`
 `;
 
 const Details = styled.div`
-  color: #666;
+  color: var(--secondary-text);
   margin-bottom: 20px;
   font-size: 0.9em;
 `;
 
 const CoverImage = styled.img`
-  width: 100%;
-  max-height: 450px;
-  object-fit: cover;
-  border-radius: 10px;
-  margin-bottom: 20px;
+  width: 100%; // Makes the image take the full width of its container
+  max-height: 450px; // Sets the maximum height to 450px
+  object-fit: cover; // Ensures the image covers the entire area without distortion
+  border-radius: 10px; // Rounds the corners of the image
+  margin-bottom: 20px; // Adds space below the image
 `;
 
 const Content = styled.p`
@@ -169,6 +171,7 @@ const Tags = styled.div`
   margin: 20px 0;
   display: flex;
   flex-wrap: wrap;
+  color: var(--secondary-text);
 `;
 
 const Tag = styled.span`
@@ -202,7 +205,7 @@ const LikeButton = styled.button`
 
 const LikesCount = styled.span`
   font-size: 1.2em;
-  color: #333;
+  color: var(--secondary-text);
 `;
 
 const BlogDetailPage: React.FC = () => {
@@ -356,46 +359,169 @@ const BlogDetailPage: React.FC = () => {
     );
   }
   const isMobile = window.innerWidth <= 600;
-  return (
-    <div>
+
+  const FourNotFour = (
+    <div
+      style={{
+        background: "var(--background)",
+      }}
+    >
       <div
         className="blogHeader"
         style={{
-          width: "90%",
+          width: "64.5%",
           height: "30px",
           position: "sticky",
+          margin: "auto",
           top: "0px",
           zIndex: "1000",
           backdropFilter: "blur(10px) saturate(153%)",
           WebkitBackdropFilter: "blur(0px) saturate(153%)",
           backgroundColor: "rgba(255, 255, 255, 0)",
-          borderRadius: "12px",
           border: "1px solid rgba(209, 213, 219, 0.3)",
           padding: "20px",
         }}
       >
-        <img
-          className="backButton"
-          src="https://www.svgrepo.com/show/18507/back-button.svg"
-          alt=""
+        <svg
           onClick={() => navigate("/home")}
+          xmlns="http://www.w3.org/2000/svg"
+          fill="var(--primary-text)"
+          height="25px"
+          width="25px"
+          version="1.1"
+          id="Capa_1"
+          viewBox="0 0 219.151 219.151"
           style={{
-            width: "30px",
-            cursor: "pointer",
             position: "relative",
-            top: "10px",
-            left: "10%",
+            left: isMobile ? "20px" : "50px",
           }}
-        />
-        <ThreeDotsButton
+        >
+          <g>
+            <path d="M109.576,219.151c60.419,0,109.573-49.156,109.573-109.576C219.149,49.156,169.995,0,109.576,0S0.002,49.156,0.002,109.575   C0.002,169.995,49.157,219.151,109.576,219.151z M109.576,15c52.148,0,94.573,42.426,94.574,94.575   c0,52.149-42.425,94.575-94.574,94.576c-52.148-0.001-94.573-42.427-94.573-94.577C15.003,57.427,57.428,15,109.576,15z" />
+            <path d="M94.861,156.507c2.929,2.928,7.678,2.927,10.606,0c2.93-2.93,2.93-7.678-0.001-10.608l-28.82-28.819l83.457-0.008   c4.142-0.001,7.499-3.358,7.499-7.502c-0.001-4.142-3.358-7.498-7.5-7.498l-83.46,0.008l28.827-28.825   c2.929-2.929,2.929-7.679,0-10.607c-1.465-1.464-3.384-2.197-5.304-2.197c-1.919,0-3.838,0.733-5.303,2.196l-41.629,41.628   c-1.407,1.406-2.197,3.313-2.197,5.303c0.001,1.99,0.791,3.896,2.198,5.305L94.861,156.507z" />
+          </g>
+        </svg>
+
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="25px"
+          height="25px"
+          viewBox="0 0 16 16"
+          fill="var(--primary-text)"
+          className="bi bi-three-dots-vertical"
+          onClick={togglePopup}
           style={{
+            position: "relative",
             left: isMobile ? "85%" : "87%",
           }}
-          className="popup"
-          onClick={togglePopup}
         >
-          ⋮
-        </ThreeDotsButton>
+          <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z" />
+        </svg>
+        {isPopupOpen && (
+          <div ref={popupRef}>
+            <BlogPopup
+              onClose={togglePopup}
+              onSave={handleSave}
+              onShare={handleShare}
+              isDetailPage={true}
+            />
+          </div>
+        )}
+      </div>
+      <BlogContainer>
+        <Toaster />
+        <Title>{blog.blog_title}</Title>
+        <Details>
+          By {blog.username} | {blog.blog_date} | {blog.blog_read_time} |
+          Category: {blog.category}
+        </Details>
+        <CoverImage
+          className="blogCoverImage"
+          src="https://inzonedesign.com/wp-content/uploads/2021/02/blog-cleverly-funny-creative-404-error-pages-metro.co_.uk_.jpg"
+          alt="Blog Cover"
+        />
+        <Content id="blogContent"></Content>
+        {blog.tags ? (
+          <Tags>
+            {blog.tags.map((tag: string) => (
+              <Tag key={tag}>{tag}</Tag>
+            ))}
+          </Tags>
+        ) : (
+          <Tags>
+            {["Technology", "Programming", "Coding"].map((tag) => (
+              <Tag key={tag}>{tag}</Tag>
+            ))}
+          </Tags>
+        )}
+        <Footer>
+          <LikeButton onClick={handleLike}>Like</LikeButton>
+          <LikesCount>{likes} Likes</LikesCount>
+        </Footer>
+        <ScrollToTopButton />
+      </BlogContainer>
+    </div>
+  );
+  if (blog.blog_id == 404 && blog.username == "admin") {
+    return FourNotFour;
+  }
+  return (
+    <div
+      style={{
+        background: "var(--background)",
+      }}
+    >
+      <div
+        className="blogHeader"
+        style={{
+          width: "64.5%",
+          height: "30px",
+          position: "sticky",
+          margin: "auto",
+          top: "0px",
+          zIndex: "1000",
+          backdropFilter: "blur(10px) saturate(153%)",
+          WebkitBackdropFilter: "blur(0px) saturate(153%)",
+          backgroundColor: "rgba(255, 255, 255, 0)",
+          border: "1px solid rgba(209, 213, 219, 0.3)",
+          padding: "20px",
+        }}
+      >
+        <svg
+          onClick={() => navigate("/home")}
+          xmlns="http://www.w3.org/2000/svg"
+          fill="var(--primary-text)"
+          height="25px"
+          width="25px"
+          version="1.1"
+          id="Capa_1"
+          viewBox="0 0 219.151 219.151"
+          style={{
+            position: "relative",
+            left: isMobile ? "20px" : "50px",
+          }}
+        >
+          <g>
+            <path d="M109.576,219.151c60.419,0,109.573-49.156,109.573-109.576C219.149,49.156,169.995,0,109.576,0S0.002,49.156,0.002,109.575   C0.002,169.995,49.157,219.151,109.576,219.151z M109.576,15c52.148,0,94.573,42.426,94.574,94.575   c0,52.149-42.425,94.575-94.574,94.576c-52.148-0.001-94.573-42.427-94.573-94.577C15.003,57.427,57.428,15,109.576,15z" />
+            <path d="M94.861,156.507c2.929,2.928,7.678,2.927,10.606,0c2.93-2.93,2.93-7.678-0.001-10.608l-28.82-28.819l83.457-0.008   c4.142-0.001,7.499-3.358,7.499-7.502c-0.001-4.142-3.358-7.498-7.5-7.498l-83.46,0.008l28.827-28.825   c2.929-2.929,2.929-7.679,0-10.607c-1.465-1.464-3.384-2.197-5.304-2.197c-1.919,0-3.838,0.733-5.303,2.196l-41.629,41.628   c-1.407,1.406-2.197,3.313-2.197,5.303c0.001,1.99,0.791,3.896,2.198,5.305L94.861,156.507z" />
+          </g>
+        </svg>
+
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="25px"
+          height="25px"
+          viewBox="0 0 16 16"
+          fill="var(--primary-text)"
+          className="bi bi-three-dots-vertical"
+          onClick={togglePopup}
+          style={{
+            position: "relative",
+            left: isMobile ? "85%" : "87%",
+          }}
+        >
+          <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z" />
+        </svg>
         {isPopupOpen && (
           <div ref={popupRef}>
             <BlogPopup

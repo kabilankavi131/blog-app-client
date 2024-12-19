@@ -1,17 +1,18 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { ThreeDotsButton, BlogPopup } from "./BlogPopup"; // Ensure to import
+import { BlogPopup } from "./BlogPopup"; // Ensure to import
 import { BlogProps } from "../interfaces/interface";
+import toast, { Toaster } from "react-hot-toast";
 
 const BlogContainer = styled.div`
   width: 90%;
   margin: 20px 0px;
   padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  background: #ffffff;
+  box-shadow: 0 4px 8px var(--border-color);
+  background: var(--background);
   border-radius: 10px;
-  color: #333;
+  color: var(--primary-text);
   position: relative;
   &:first-child {
     margin-top: 150px;
@@ -29,17 +30,19 @@ const NormalDiv = styled.div`
 const Title = styled.h1`
   font-size: 2em;
   margin-bottom: 10px;
+  color: var(--primary-text);
 `;
 
 const Details = styled.div`
-  color: #666;
+  color: var(--secondary-text);
   margin-bottom: 20px;
   font-size: 0.9em;
 `;
 
 const CoverImage = styled.img`
   width: 30%;
-  max-height: 400px;
+  margin: 20px;
+  max-height: 500px;
   object-fit: cover;
   border-radius: 10px;
   margin-bottom: 20px;
@@ -90,7 +93,7 @@ const LikeButton = styled.button`
 
 const LikesCount = styled.span`
   font-size: 1.2em;
-  color: #333;
+  color: var(--secondary-text);
 `;
 
 const BlogItem: React.FC<BlogProps> = ({ blog }) => {
@@ -134,18 +137,24 @@ const BlogItem: React.FC<BlogProps> = ({ blog }) => {
     };
   }, [isPopupOpen]);
 
-  return (
+  const Blog = (
     <BlogContainer>
-      <ThreeDotsButton
-        style={{
-          position: "absolute",
-          top: "10px",
-          right: "10px",
-        }}
+      <Toaster />
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="25px"
+        height="25px"
+        viewBox="0 0 16 16"
+        fill="var(--primary-text)"
+        className="bi bi-three-dots-vertical"
         onClick={togglePopup}
+        style={{
+          position: "relative",
+          left: "95%",
+        }}
       >
-        ⋮
-      </ThreeDotsButton>
+        <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z" />
+      </svg>
       {isPopupOpen && (
         <div ref={popupRef}>
           <BlogPopup
@@ -165,7 +174,11 @@ const BlogItem: React.FC<BlogProps> = ({ blog }) => {
           Category: {blog.category} | 100 Views
         </Details>
         <CoverImage
-          src={`data:image/jpeg;base64,${blog.blog_cover_image}`}
+          src={
+            blog.blog_id == 404 && blog.username == "admin"
+              ? "https://inzonedesign.com/wp-content/uploads/2021/02/blog-cleverly-funny-creative-404-error-pages-metro.co_.uk_.jpg"
+              : `data:image/jpeg;base64,${blog.blog_cover_image}`
+          }
           alt="Blog Cover"
         />
         <Content>{blog.blog_description}</Content>
@@ -182,6 +195,7 @@ const BlogItem: React.FC<BlogProps> = ({ blog }) => {
       </Footer>
     </BlogContainer>
   );
-};
 
+  return Blog;
+};
 export default BlogItem;

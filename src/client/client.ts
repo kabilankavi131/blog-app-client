@@ -1,23 +1,29 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-const client = async (endpoint: any, method: any, data: any): Promise<any> => {
+
+const client = async (
+  endpoint: string,
+  method: string,
+  payload: Record<string, any> // Specify payload as a record of key-value pairs
+): Promise<any> => {
   const blogConfiguration: AxiosRequestConfig = {
     method: method,
     url: endpoint,
     headers: {
-      "Content-Type": "multipart/form-data",
+      "Content-Type": "application/json",
     },
-    data: data,
+    data: payload,
   };
 
   try {
     const response: AxiosResponse = await axios(blogConfiguration);
-    if (response.status === 200 || response.status === 201) {
-      return response.data;
+    if (response.status >= 200 && response.status < 300) {
+      return response.data; // Returns the response data on success
     }
-    return 500;
-  } catch (error) {
+    throw new Error(`Request failed with status ${response.status}`);
+  } catch (error: any) {
     console.error("Error making request:", error);
-    return 500;
+    // Optionally return a more descriptive error object
+    return { error: error.message || "An unknown error occurred." };
   }
 };
 

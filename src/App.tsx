@@ -14,30 +14,33 @@ import { GoogleOAuthProvider } from "@react-oauth/google"; // Import GoogleOAuth
 import UserDetailsProvider from "./context/UserDetailsProvider";
 import Favourites from "./components/Favourite";
 import DeveloperAboutPage from "./components/DeveloperAboutPage";
+import BlogsListsProvider from "./context/BlogListsProvider";
 
 const App: React.FC = () => {
   return (
-    <UserDetailsProvider>
-      <GoogleOAuthProvider clientId="78640302180-2bqb9sn8f0tcl8v9qerssvr0smuemnb0.apps.googleusercontent.com">
-        <Router>
-          <Routes>
-            <Route path="/home" element={<HomePage />} />
-            <Route path="/blogs" element={<BlogList />} />
-            <Route path="/blog/:id" element={<BlogDetailPage />} />
-            <Route path="/addblog" element={<AddBlogPage />} />
-            <Route path="/blogs/latest" element={<LatestBlog />} />
-            <Route path="/blogs/trending" element={<TrendingBlog />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/" element={<WelcomeScreen />} />
-            <Route path="/login" element={<LoginScreen />} />
-            <Route path="/signup" element={<SignUpScreen />} />
-            <Route path="/fav" element={<Favourites />} />
-            <Route path="aboutdeveloper" element={<DeveloperAboutPage />} />
-            {/* Add UserProfile route */}
-          </Routes>
-        </Router>
-      </GoogleOAuthProvider>
-    </UserDetailsProvider>
+    <BlogsListsProvider>
+      <UserDetailsProvider>
+        <GoogleOAuthProvider clientId="78640302180-2bqb9sn8f0tcl8v9qerssvr0smuemnb0.apps.googleusercontent.com">
+          <Router>
+            <Routes>
+              <Route path="/home" element={<HomePage />} />
+              <Route path="/blogs" element={<BlogList />} />
+              <Route path="/blog/:id" element={<BlogDetailPage />} />
+              <Route path="/addblog" element={<AddBlogPage />} />
+              <Route path="/blogs/latest" element={<LatestBlog />} />
+              <Route path="/blogs/trending" element={<TrendingBlog />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/" element={<WelcomeScreen />} />
+              <Route path="/login" element={<LoginScreen />} />
+              <Route path="/signup" element={<SignUpScreen />} />
+              <Route path="/fav" element={<Favourites />} />
+              <Route path="aboutdeveloper" element={<DeveloperAboutPage />} />
+              {/* Add UserProfile route */}
+            </Routes>
+          </Router>
+        </GoogleOAuthProvider>
+      </UserDetailsProvider>
+    </BlogsListsProvider>
   );
 };
 

@@ -6,6 +6,7 @@ import BlogNav from "./BlogNav";
 import SearchBar from "./SearchBar";
 import { persistUserData } from "../services/services";
 import { useNavigate } from "react-router-dom";
+import HamburgerMenu from "./HamburgerMenu";
 
 const LatestBlog: React.FC = () => {
   const [activeTab, setActiveTab] = useState<number>(2); // Default to first tab
@@ -23,6 +24,7 @@ const LatestBlog: React.FC = () => {
   return (
     <div id="home-page" className="page">
       <AppHeader />
+      <HamburgerMenu />
       <SearchBar />
       <BlogNav activeTab={activeTab} onTabChange={handleTabChange} />
       <BlogList />

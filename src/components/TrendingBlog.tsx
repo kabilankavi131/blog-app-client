@@ -6,6 +6,7 @@ import BlogNav from "./BlogNav";
 import SearchBar from "./SearchBar";
 import { persistUserData } from "../services/services";
 import { useNavigate } from "react-router-dom";
+import HamburgerMenu from "./HamburgerMenu";
 
 const TrendingBlog: React.FC = () => {
   const navigate = useNavigate();
@@ -22,6 +23,7 @@ const TrendingBlog: React.FC = () => {
   return (
     <div id="home-page" className="page">
       <AppHeader />
+      <HamburgerMenu />
       <SearchBar />
       <BlogNav activeTab={activeTab} onTabChange={handleTabChange} />
       <BlogList />
