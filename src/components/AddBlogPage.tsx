@@ -92,7 +92,7 @@ const AddBlog: React.FC = () => {
       const response: Categories[] = await client(
         "https://blogspace-app-server.vercel.app/categories",
         "GET",
-      {}
+        {}
       );
       setCategories(response);
     } catch (err) {

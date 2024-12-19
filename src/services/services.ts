@@ -165,5 +165,5 @@ export function getDateUptoYear() {
     year: "numeric",
   };
   const today = new Date();
-  return today.toLocaleDateString("en-US", options)[1];
+  return today.toLocaleDateString("en-US", options);
 }
