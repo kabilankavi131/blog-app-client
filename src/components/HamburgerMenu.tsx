@@ -34,7 +34,7 @@ const HamburgerMenu: React.FC = () => {
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          width="25x"
+          width="25px"
           height="25px"
           viewBox="0 0 24 24"
         >

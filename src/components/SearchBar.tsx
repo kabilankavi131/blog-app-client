@@ -93,7 +93,9 @@ const SearchBar: React.FC = () => {
     );
     const getFilteredBlogs = async () => {
       try {
-        const blogs: Blog[] = await getBlogsByCategories(selectedCategories);
+        const blogs: Blog[] | any = await getBlogsByCategories(
+          selectedCategories
+        );
         toast.dismiss(loader);
         if (blogs.length == 0) {
           toast.error("No blogs found with selected categories");

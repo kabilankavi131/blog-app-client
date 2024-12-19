@@ -58,14 +58,15 @@ export const getBlogs = async () => {
 };
 export const getBlogsByCategories = async (categories: any) => {
   try {
-    const blogs = await client(
+    const blogs = await axios.post(
       "https://blogspace-app-server.vercel.app/blogsbycategories",
-      "POST",
       {
         categoryIds: categories,
       }
     );
-    return blogs;
+    console.log("Returned Categories: ", blogs);
+
+    return blogs.data;
   } catch (error: any) {
     console.error("Error fetching blogs by categories:", error.message);
     throw new Error("Failed to fetch blogs by categories."); // Propagate the error for handling
