@@ -42,10 +42,22 @@ const AppHeader: React.FC = () => {
 
   const toggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
-    setTheme(newTheme);
-    document.documentElement.setAttribute("data-theme", newTheme);
-    document.body.style.backgroundColor =
-      newTheme === "dark" ? "#0f1214" : "#f0f8ff";
+    const themeIcons = document.querySelectorAll(".theme-switcher svg");
+    themeIcons.forEach((icon) => {
+      icon.classList.remove("active");
+      icon.classList.add("entering");
+    });
+    setTimeout(() => {
+      setTheme(newTheme);
+      document.documentElement.setAttribute("data-theme", newTheme);
+      document.body.style.backgroundColor =
+        newTheme === "dark" ? "#0f1214" : "#f0f8ff";
+      // Update classes after theme is set
+      themeIcons.forEach((icon) => {
+        icon.classList.remove("entering");
+        icon.classList.add("active");
+      });
+    }, 300); // Matches CSS transition duration
   };
 
   // Close sidebar or popup when clicking outside

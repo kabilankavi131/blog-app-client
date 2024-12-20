@@ -19,9 +19,11 @@ export default SearchBlogLottie;
 const Container = styled.div`
   width: 30%;
   position: absolute;
-  left: -10px;
-  top: 50px;
-  // background: blue;
+  left: 50%;
+  top: -50%;
   margin: 0 auto;
-  z-index: 1500;
+  z-index: 2000;
+  @media (min-width: 300px) and (max-width: 800px) {
+    top: -25%;
+  }
 `;

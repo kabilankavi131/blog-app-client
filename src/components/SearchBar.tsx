@@ -28,6 +28,7 @@ const SearchBar: React.FC = () => {
     if (blogs.length === 0) {
       setBlogs([]);
       setNoBlogFound(true);
+      setShowSearchloading(false);
       return;
     }
     setShowSearchloading(false);

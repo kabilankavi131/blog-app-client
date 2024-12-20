@@ -1,10 +1,11 @@
+import React from "react";
 import { useLottie } from "lottie-react";
-import startLoading from "./startLoading.json";
+import FourNotFourIcon from "../components/Lottie Files/fournotfour.json";
 import styled from "styled-components";
 
-const StartLoading = () => {
+const FourNotFour = () => {
   const options = {
-    animationData: startLoading,
+    animationData: FourNotFourIcon,
     loop: true,
   };
 
@@ -13,12 +14,9 @@ const StartLoading = () => {
   return <Container>{View}</Container>;
 };
 
-export default StartLoading;
+export default FourNotFour;
 
 const Container = styled.div`
-  height: 100px;
-  width: 30%;
-  min-width: 250px;
-  position: relative;
-  margin: 0 auto;
+  width: 60%;
+  margin: 3% 20%;
 `;

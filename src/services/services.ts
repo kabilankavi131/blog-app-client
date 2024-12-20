@@ -175,13 +175,18 @@ export const getBlogysbySearch = async (
   startFrom: number
 ) => {
   console.log(blogTitle, startFrom);
-  const response = await axios.post(
-    "https://blogspace-app-server.vercel.app/searchedblogs",
-    {
-      query: blogTitle,
-      startingRow: startFrom,
-    }
-  );
-  console.log("Searched Blogs: ", response);
-  return response.data;
+  try {
+    const response = await axios.post(
+      "https://blogspace-app-server.vercel.app/searchedblogs",
+      {
+        query: blogTitle,
+        startingRow: startFrom,
+      }
+    );
+    // console.log("Searched Blogs: ", response);
+    return response.data;
+  } catch (err: any) {
+    console.log(err);
+    return [];
+  }
 };

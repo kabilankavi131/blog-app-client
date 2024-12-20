@@ -13,6 +13,7 @@
   --border-color: #e0e0e0; /* Light theme border color */
   --hamburger-bg-color: #333;
   --hamburger-color: #ffff;
+  --transition-duration: 0.4s;
 }
 html {
   background-color: var(--background);
@@ -30,7 +31,11 @@ html {
   --hamburger-bg-color: #0d1721;
   --hamburger-color: #ffff;
 }
-
+[data-theme="light"],
+[data-theme="dark"] {
+  transition: background-color var(--transition-duration),
+    color var(--transition-duration);
+}
 body {
   font-family: Arial, sans-serif;
   margin: 0;
@@ -120,6 +125,8 @@ body {
   position: absolute;
   top: 20px;
   right: 15%;
+  transition: opacity 0.9s ease-in-out;
+  opacity: 1;
 }
 .write-btn {
   display: flex;
@@ -567,10 +574,7 @@ svg {
     cursor: pointer;
     transition: background-color 0.3s;
   }
-  .write-btn-mobile img {
-    height: 30px;
-    padding: 10px;
-  }
+
   .write-btn-mobile:hover {
     background-color: rgba(104, 195, 252, 0.9); /* Darker shade on hover */
   }
@@ -627,7 +631,21 @@ svg {
     position: absolute;
     top: 17px;
     right: 30%;
+    transition: 0.3s;
   }
+}
+
+.theme-switcher svg {
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+.theme-switcher svg.entering {
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+.theme-switcher svg.active {
+  opacity: 1;
+  transform: scale(1);
 }
 
 /* Hamburger menu */
@@ -942,6 +960,7 @@ svg {
 .noSearchedBlogFound {
   position: fixed;
   top: 50%;
+  min-width: 250px;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 30000;
@@ -956,6 +975,6 @@ svg {
 .christmassCap {
   position: absolute;
   width: 40px;
-  top:-2px;
-  left:50px;
+  top: -2px;
+  left: 50px;
 }
