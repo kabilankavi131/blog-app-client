@@ -68,7 +68,12 @@ const SignUpScreen: React.FC = () => {
   return (
     <Box sx={styles.container}>
       <Toaster />
-      <Typography variant="h4" fontWeight="bold" sx={{ mb: 3 }}>
+      <Typography
+        variant="h4"
+        fontWeight="bold"
+        color="var(--primary-text)"
+        sx={{ mb: 3 }}
+      >
         Sign Up for Blog Space
       </Typography>
       <Box component="form" onSubmit={handleSignUp} sx={styles.form}>

@@ -1,17 +1,39 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { Blog, Categories } from "../interfaces/interface";
 import client from "../client/client";
-import { getBlogsByCategories } from "../services/services";
+import { getBlogsByCategories, getBlogysbySearch } from "../services/services";
 import { BlogContext, BlogContextType } from "../context/BlogListsProvider";
 import toast, { Toaster } from "react-hot-toast";
+import SearchBlogLottie from "./Lottie Files/SearchBlog";
 
 const SearchBar: React.FC = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const context = useContext(BlogContext) as BlogContextType;
-  const [isBlogNotFount, setIsBlogNotFound] = useState<boolean>(false);
+  const [query, setQuery] = useState<string>("");
+  const [noBlogFound, setNoBlogFound] = useState<boolean>(false);
   const { blogs, setBlogs } = context;
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [showSearchloading, setShowSearchloading] = useState<boolean>(false);
   const [categories, setCategories] = useState<Categories[]>([]);
+
+  const getSearchedBlogs = async (blogTitle: string, startFrom: number) => {
+    setShowSearchloading(true);
+    const loadMore: HTMLElement | any =
+      document.getElementById("loadMoreContainer");
+    if (loadMore) {
+      loadMore.style.display = "none";
+    }
+
+    const blogs: Blog[] = await getBlogysbySearch(blogTitle, startFrom);
+    if (blogs.length === 0) {
+      setBlogs([]);
+      setNoBlogFound(true);
+      return;
+    }
+    setShowSearchloading(false);
+    setBlogs(blogs);
+    setNoBlogFound(false);
+  };
 
   // Fetch categories dynamically
   const getCategories = async () => {
@@ -133,14 +155,28 @@ const SearchBar: React.FC = () => {
       <Toaster />
       <div className="search-bar">
         <div className="search-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            onClick={() => {
+              getSearchedBlogs(query, 0);
+            }}
+          >
             <path
               fill="currentColor"
               d="M4.092 11.06a6.95 6.95 0 1 1 13.9 0 6.95 6.95 0 0 1-13.9 0m6.95-8.05a8.05 8.05 0 1 0 5.13 14.26l3.75 3.75a.56.56 0 1 0 .79-.79l-3.73-3.73A8.05 8.05 0 0 0 11.042 3z"
             />
           </svg>
         </div>
-        <input type="text" placeholder="Search" className="search-input" />
+        {showSearchloading && <SearchBlogLottie />}
+        <input
+          type="text"
+          placeholder="Search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          className="search-input"
+        />
         <div className="filter-icon" onClick={toggleDropdown}>
           <svg
             width="25px"
@@ -193,6 +229,11 @@ const SearchBar: React.FC = () => {
               />
             </div>
           </div>
+        </div>
+      )}
+      {noBlogFound && (
+        <div className="noSearchedBlogFound">
+          <h2>Stay Tuned, Blogs Coming Soon!</h2>
         </div>
       )}
     </div>

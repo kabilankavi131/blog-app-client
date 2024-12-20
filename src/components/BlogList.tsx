@@ -4,22 +4,45 @@ import { Blog } from "../interfaces/interface";
 import { getBlogs } from "../services/services";
 import { useNavigate } from "react-router-dom";
 import { BlogContext, BlogContextType } from "../context/BlogListsProvider";
+import Loading from "./Lottie Files/Loading";
+import StartLoading from "./Lottie Files/StartLoading";
 
 const BlogList: React.FC = () => {
   const context = useContext(BlogContext) as BlogContextType;
   const { blogs, setBlogs } = context;
   const navigateTo = useNavigate();
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const getData = async () => {
-    const blog: Blog[] = await getBlogs();
-    // console.log("Blogs: ", blog);
+  const [isloadmore, setisloadmore] = useState<boolean>(false);
+  const [isBlogAvailable, setIsBlogAvailable] = useState<boolean>(true);
+  const getData = async (startingRow = 0) => {
+    try {
+      setisloadmore(true);
+      const blog: Blog[] = await getBlogs(startingRow);
+      setisloadmore(false);
+      if (blog.length == 0) {
+        setIsBlogAvailable(false);
+      }
+      console.log("Blogs: ", blog);
 
-    setBlogs(blog);
-    setIsLoading(false);
+      // Append the new data to the existing blogs
+      setBlogs((prevBlogs: Blog[]) => {
+        return [...prevBlogs, ...blog];
+      });
+
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error fetching blogs: ", error);
+      setIsLoading(false);
+    }
   };
   useEffect(() => {
     getData();
   }, []);
+
+  const loadMoreData = () => {
+    const startingRow = blogs.length;
+    getData(startingRow);
+  };
   if (!context) {
     console.warn("UserContext is not available");
     navigateTo("/");
@@ -53,14 +76,24 @@ const BlogList: React.FC = () => {
           </svg>
         </button>
       </div>
+      <div className="loadMoreContainer" id="loadMoreContainer">
+        {isloadmore ? (
+          <div>
+            <StartLoading />
+          </div>
+        ) : (
+          isBlogAvailable && (
+            <div onClick={loadMoreData}>
+              <h3>Load More</h3>
+            </div>
+          )
+        )}
+      </div>
     </section>
   );
   const loadingData = (
     <div className="loading-container">
-      <img
-        src="https://blog-app-resources.vercel.app/Images/loading.gif"
-        alt="Loading"
-      />
+      <Loading />
     </div>
   );
   return isLoading ? loadingData : fetchedData;

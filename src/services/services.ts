@@ -48,13 +48,14 @@ export const addBlog = async (blog: Blog) => {
   );
 };
 
-export const getBlogs = async () => {
-  const blogs = await client(
+export const getBlogs = async (startFrom = 0) => {
+  const blogs = await axios.post(
     "https://blogspace-app-server.vercel.app/blogs",
-    "GET",
-    {}
+    {
+      startingRow: startFrom,
+    }
   );
-  return blogs;
+  return blogs.data;
 };
 export const getBlogsByCategories = async (categories: any) => {
   try {
@@ -168,3 +169,19 @@ export function getDateUptoYear() {
   const today = new Date();
   return today.toLocaleDateString("en-US", options);
 }
+
+export const getBlogysbySearch = async (
+  blogTitle: string,
+  startFrom: number
+) => {
+  console.log(blogTitle, startFrom);
+  const response = await axios.post(
+    "https://blogspace-app-server.vercel.app/searchedblogs",
+    {
+      query: blogTitle,
+      startingRow: startFrom,
+    }
+  );
+  console.log("Searched Blogs: ", response);
+  return response.data;
+};

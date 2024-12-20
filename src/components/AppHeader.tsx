@@ -78,6 +78,11 @@ const AppHeader: React.FC = () => {
     <header className="app-header">
       <Toaster />
       <div>
+        <img
+          className="christmassCap"
+          src="https://global.discourse-cdn.com/flex015/uploads/thunkable/original/3X/d/2/d22be0da708c5ebe8844d98a3d17d569ac8270c2.png"
+          alt=""
+        />
         <h1 className="app-title">Blog Space</h1>
       </div>
       <div className="header-right">
