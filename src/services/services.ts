@@ -190,3 +190,42 @@ export const getBlogysbySearch = async (
     return [];
   }
 };
+
+// Store blog data in session storage.
+
+export const persistBlogData = {
+  saveBlogData: (blogData: Blog[]): void => {
+    try {
+      // Serialize the userData object into a string
+      const serializedData = JSON.stringify(blogData);
+      // Save the serialized data to sessionStorage
+      sessionStorage.setItem("blog_data", serializedData);
+    } catch (error) {
+      console.error("Error saving user data to sessionStorage:", error);
+    }
+  },
+
+  loadBlogData: (): Blog[] | null => {
+    try {
+      // Retrieve the serialized user data from sessionStorage
+      const serializedData = sessionStorage.getItem("blog_data");
+      if (serializedData) {
+        // Parse the string back into the UserProfile object
+        return JSON.parse(serializedData) as Blog[];
+      }
+    } catch (error) {
+      console.error("Error loading user data from sessionStorage:", error);
+    }
+    // Return null user profile if no data found
+    return null;
+  },
+
+  clearBlogData: (): void => {
+    try {
+      // Remove the user data from sessionStorage
+      sessionStorage.removeItem("blog_data");
+    } catch (error) {
+      console.error("Error clearing user data from sessionStorage:", error);
+    }
+  },
+};

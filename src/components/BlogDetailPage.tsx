@@ -47,7 +47,10 @@ const BlogContainer = styled.div`
     width: 95%;
     margin: 20px;
   }
-
+  iframe {
+    width: 100%;
+    height: 400px;
+  }
   ol,
   ul {
     margin: 10px;

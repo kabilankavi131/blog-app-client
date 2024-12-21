@@ -161,7 +161,7 @@ const SearchBar: React.FC = () => {
             width="24"
             height="24"
             onClick={() => {
-              getSearchedBlogs(query, 0);
+              if (query.trim() != "") getSearchedBlogs(query, 0);
             }}
           >
             <path
@@ -173,7 +173,7 @@ const SearchBar: React.FC = () => {
         {showSearchloading && <SearchBlogLottie />}
         <input
           type="text"
-          placeholder="Search"
+          placeholder="Search... (Click the search icon to submit)"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           className="search-input"
