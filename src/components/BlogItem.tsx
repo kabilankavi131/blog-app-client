@@ -2,8 +2,10 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { BlogPopup } from "./BlogPopup"; // Ensure to import
-import { BlogProps } from "../interfaces/interface";
+import { Blog, BlogProps } from "../interfaces/interface";
 import toast, { Toaster } from "react-hot-toast";
+import { persistBlogData, updateBlogLikes } from "../services/services";
+import LikeLottie from "./Lottie Files/LikeLoader";
 
 const BlogContainer = styled.div`
   width: 90%;
@@ -53,6 +55,7 @@ const Content = styled.p`
   width: 100%;
   font-size: 1.2em;
   line-height: 1.6;
+  min-height:100px;
   box-sizing: border-box;
 `;
 
@@ -99,11 +102,32 @@ const LikesCount = styled.span`
 const BlogItem: React.FC<BlogProps> = ({ blog }) => {
   const [likes, setLikes] = useState(blog.likes);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [showLikeAnimation, setshowLikeAnimation] = useState<boolean>(false);
   const navigate = useNavigate();
   const popupRef = useRef<HTMLDivElement>(null);
-
+  const handleLikeLottie = () => {
+    setshowLikeAnimation(true);
+    setTimeout(() => {
+      setshowLikeAnimation(false);
+    }, 2000);
+  };
   const handleLike = () => {
+    handleLikeLottie();
     setLikes(likes + 1);
+    const existingsessionBlog: Blog[] | any = persistBlogData.loadBlogData();
+
+    const updatedBlogs = existingsessionBlog?.map((sessionblog: Blog) => {
+      if (sessionblog.blog_id === blog.blog_id) {
+        return {
+          ...sessionblog,
+          likes: sessionblog.likes + 1, // Update the likes for the specific blog
+        };
+      }
+      return sessionblog; // Return the unchanged blog if it doesn't match
+    });
+
+    persistBlogData.saveBlogData(updatedBlogs); // Save the updated blog data
+    updateBlogLikes(blog.blog_id);
   };
 
   const togglePopup = () => {
@@ -191,6 +215,7 @@ const BlogItem: React.FC<BlogProps> = ({ blog }) => {
 
       <Footer>
         <LikeButton onClick={handleLike}>Like</LikeButton>
+        {showLikeAnimation && <LikeLottie />}
         <LikesCount>{likes} Likes</LikesCount>
       </Footer>
     </BlogContainer>

@@ -229,3 +229,30 @@ export const persistBlogData = {
     }
   },
 };
+
+export const updateBlogLikes = async (blogId: number) => {
+  try {
+    const response = await axios.post(
+      "https://blogspace-app-server.vercel.app/blogs/likes",
+      {
+        blog_id: blogId,
+      }
+    );
+    return response.data; // Returns the success message or response data
+  } catch (error) {
+    console.error("Error updating likes:", error);
+    throw error; // Rethrow the error to handle it in the calling function if needed
+  }
+};
+
+export const getBlogById = async (blogId: number) => {
+  try {
+    const response = await axios.get(
+      `https://blogspace-app-server.vercel.app/singleblog/${blogId}`
+    );
+    return response.data; // Returns the blog data
+  } catch (error) {
+    console.error("Error fetching blog:", error);
+    throw error; // Rethrow the error to handle it in the calling function if needed
+  }
+};

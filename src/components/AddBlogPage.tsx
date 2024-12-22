@@ -6,11 +6,12 @@ import { getDateUptoYear, persistUserData } from "../services/services";
 import client from "../client/client";
 import toast, { Toaster } from "react-hot-toast";
 import ReactQuill, { Quill } from "react-quill";
-import JoditEditor from "jodit-react";
-import { blogs } from "../constants/constants";
+import "react-quill/dist/quill.snow.css";
+
 const AddBlog: React.FC = () => {
   const navigate = useNavigate();
   const [categories, setCategories] = useState<Categories[]>([]);
+
   const modules = {
     toolbar: [
       [{ header: [1, 2, false] }], // Header options
@@ -221,7 +222,7 @@ const AddBlog: React.FC = () => {
         onChange={handleChange}
         required
       />
-      {/* <ReactQuill
+      <ReactQuill
         modules={modules}
         theme="snow"
         className="blogContent"
@@ -232,21 +233,6 @@ const AddBlog: React.FC = () => {
             blog_content: content,
           }));
         }}
-      /> */}
-      <JoditEditor
-        config={{
-          style: {
-            height: "400px",
-            width: "10px",
-          },
-        }}
-        onBlur={(content) => {
-          setFormState((prev) => ({
-            ...prev,
-            blog_content: content,
-          }));
-        }}
-        value={formState.blog_content}
       />
       <Input
         type="file"
@@ -304,7 +290,7 @@ const Form = styled.form`
     position: relative;
     width: 98%;
     margin-bottom: 80px;
-    height: 500px;
+    height: 300px;
      color:var(--secondary-text);
   }
   .blogContent .ql-editor::before {
@@ -318,10 +304,7 @@ const Form = styled.form`
     fill: none;
     stroke:  var(--primary-text);
 }
-    .jodit-wysiwyg {
-  height: 500px !important;
-  width: 100% !important;
-}
+
 .ql-toolbar .ql-fill {
     fill:  var(--primary-text);
     stroke: none;
@@ -335,11 +318,6 @@ const Form = styled.form`
     margin: 20px;
   }
 
-
-  .jodit-react-container{
-    background-color: black !important;
-    width:98%;
-  }
   pre {
     background-color: #0d0d0d;
     color: #007bff;
@@ -349,11 +327,6 @@ const Form = styled.form`
   }
   pre code {
     width: 90%;
-  }
-    iframe{
-      position:relative;
-      width:100%;
-      height:400px;
   }
   @media (min-width: 300px) and (max-width: 800px) {
     width: 85%;

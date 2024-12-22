@@ -5,8 +5,16 @@ import { BlogPopup } from "./BlogPopup"; // Ensure to import
 import { Blog } from "../interfaces/interface";
 import toast, { Toaster } from "react-hot-toast";
 import { marked } from "marked";
-import { persistUserData } from "../services/services";
+import {
+  getBlogById,
+  persistBlogData,
+  persistUserData,
+  updateBlogLikes,
+} from "../services/services";
 import ScrollToTopButton from "./ScrollToTopButton";
+import LikeLottie from "./Lottie Files/LikeLoader";
+import { getBadgeUtilityClass } from "@mui/material";
+import { log } from "node:console";
 const BlogContainer = styled.div`
   width: 60%;
   margin: 20px auto;
@@ -212,8 +220,16 @@ const LikesCount = styled.span`
 `;
 
 const BlogDetailPage: React.FC = () => {
+  const [showLikeAnimation, setshowLikeAnimation] = useState<boolean>(false);
   const location = useLocation();
   const navigate = useNavigate();
+
+  const handleLikeLottie = () => {
+    setshowLikeAnimation(true);
+    setTimeout(() => {
+      setshowLikeAnimation(false);
+    }, 2000);
+  };
   const defaultBlog: Blog = {
     blog_id: 0,
     username: "",
@@ -233,7 +249,27 @@ const BlogDetailPage: React.FC = () => {
     category: "General",
     likes: 0,
   };
-  const blog: Blog = location.state?.blog || defaultBlog;
+
+  const [blog, setBlog] = useState<Blog>(location.state?.blog || defaultBlog);
+  const getBlog = async () => {
+    // Ensure that blog.blog_id exists
+    if (blog.blog_id) {
+      const data = await getBlogById(blog.blog_id); // Await the asynchronous call
+      return data; // Return the fetched data
+    }
+    return defaultBlog; // Return default if no blog_id
+  };
+
+  useEffect(() => {
+    const fetchBlog = async () => {
+      const blogData = await getBlog(); // Await the resolved data
+      console.log("Blogs:", blogData);
+      setBlog(blogData); // Set the state with the fetched blog data
+      setLikes(blogData.likes);
+    };
+
+    fetchBlog(); // Call the fetch function
+  }, [blog.blog_id]); // Dependency array with blog.blog_id
   let copiedCount = 0;
   const codeCopied = () => {
     if (copiedCount <= 1) {
@@ -261,7 +297,16 @@ const BlogDetailPage: React.FC = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const popupRef = useRef<HTMLDivElement>(null);
   const handleLike = () => {
+    handleLikeLottie();
     setLikes(likes + 1);
+    const existingsessionBlog = persistBlogData.loadBlogData();
+    existingsessionBlog?.forEach((sessionblog) => {
+      if (sessionblog.blog_id === blog.blog_id) {
+        blog.likes = likes + 1;
+        persistBlogData.saveBlogData(existingsessionBlog);
+      }
+    });
+    updateBlogLikes(blog.blog_id);
   };
 
   const togglePopup = () => {
@@ -468,6 +513,7 @@ const BlogDetailPage: React.FC = () => {
   if (blog.blog_id == 404 && blog.username == "admin") {
     return FourNotFour;
   }
+
   return (
     <div
       style={{
@@ -564,6 +610,7 @@ const BlogDetailPage: React.FC = () => {
         )}
         <Footer>
           <LikeButton onClick={handleLike}>Like</LikeButton>
+          {showLikeAnimation && <LikeLottie />}
           <LikesCount>{likes} Likes</LikesCount>
         </Footer>
         <ScrollToTopButton />
