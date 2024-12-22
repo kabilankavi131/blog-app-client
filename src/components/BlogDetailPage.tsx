@@ -504,6 +504,7 @@ const BlogDetailPage: React.FC = () => {
         )}
         <Footer>
           <LikeButton onClick={handleLike}>Like</LikeButton>
+          {showLikeAnimation && <LikeLottie />}
           <LikesCount>{likes} Likes</LikesCount>
         </Footer>
         <ScrollToTopButton />
