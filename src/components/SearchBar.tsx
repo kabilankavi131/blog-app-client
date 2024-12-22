@@ -88,7 +88,7 @@ const SearchBar: React.FC = () => {
         is_active: true,
         tags: ["funny", "blog", "exploration", "humor"],
         category: "General",
-        likes: 0,
+        likes: 404,
       },
     ];
     setBlogs(defaultBlog);

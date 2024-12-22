@@ -26,7 +26,7 @@ const HomePage: React.FC = () => {
       <HamburgerMenu />
       <SearchBar />
       <BlogNav activeTab={activeTab} onTabChange={handleTabChange} />
-      <BlogList />
+      <BlogList blogType={"Featured"} />
       <ScrollToTopButton />
     </div>
   );

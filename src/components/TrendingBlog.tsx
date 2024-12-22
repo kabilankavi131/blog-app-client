@@ -26,7 +26,8 @@ const TrendingBlog: React.FC = () => {
       <HamburgerMenu />
       <SearchBar />
       <BlogNav activeTab={activeTab} onTabChange={handleTabChange} />
-      <BlogList />
+      <BlogList blogType={"Trending"} />
+
       <ScrollToTopButton />
     </div>
   );

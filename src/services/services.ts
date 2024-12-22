@@ -48,9 +48,23 @@ export const addBlog = async (blog: Blog) => {
   );
 };
 
-export const getBlogs = async (startFrom = 0) => {
+export const getBlogs = async (startFrom: number = 0, blogType: string) => {
+  let endpoint: string = "";
+  switch (blogType) {
+    case "Trending":
+      endpoint = "gettrendingblogs";
+      break;
+    case "Featured":
+      endpoint = "blogs";
+      break;
+    case "Latest":
+      endpoint = "getlatestblogs";
+      break;
+    default:
+      endpoint = "blogs";
+  }
   const blogs = await axios.post(
-    "https://blogspace-app-server.vercel.app/blogs",
+    `https://blogspace-app-server.vercel.app/${endpoint}`,
     {
       startingRow: startFrom,
     }

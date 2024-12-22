@@ -7,7 +7,11 @@ import { BlogContext, BlogContextType } from "../context/BlogListsProvider";
 import Loading from "./Lottie Files/Loading";
 import StartLoading from "./Lottie Files/StartLoading";
 
-const BlogList: React.FC = () => {
+interface BlogListInterface {
+  blogType: string;
+}
+
+const BlogList: React.FC<BlogListInterface> = ({ blogType }) => {
   const navigateTo = useNavigate();
   const context = useContext(BlogContext) as BlogContextType;
 
@@ -20,8 +24,9 @@ const BlogList: React.FC = () => {
   const getData = async (startingRow = 0) => {
     try {
       setIsLoadMore(true);
-      const blog: Blog[] = await getBlogs(startingRow);
+      const blog: Blog[] = await getBlogs(startingRow, blogType);
       setIsLoadMore(false);
+      console.log(`${blogType} : `, blog);
 
       if (blog.length === 0) {
         setIsBlogAvailable(false);
@@ -29,8 +34,16 @@ const BlogList: React.FC = () => {
 
       // Append the new data to the existing blogs
       setBlogs((prevBlogs: Blog[]) => {
-        persistBlogData.saveBlogData([...prevBlogs, ...blog]);
-        return [...prevBlogs, ...blog];
+        let updatedBlogs = [...prevBlogs, ...blog];
+        switch (blogType) {
+          case "Trending":
+            updatedBlogs = blog;
+            break;
+          case "Latest":
+            updatedBlogs = blog;
+            break;
+        }
+        return updatedBlogs;
       });
 
       setIsLoading(false);
@@ -51,8 +64,12 @@ const BlogList: React.FC = () => {
       }
     };
 
-    checkAndFetchData();
+    // checkAndFetchData();
   }, [setBlogs]);
+
+  useEffect(() => {
+    getData();
+  }, []);
 
   const loadMoreData = () => {
     const startingRow = blogs.length;

@@ -27,7 +27,7 @@ const LatestBlog: React.FC = () => {
       <HamburgerMenu />
       <SearchBar />
       <BlogNav activeTab={activeTab} onTabChange={handleTabChange} />
-      <BlogList />
+      <BlogList blogType={"Latest"} />
       <ScrollToTopButton />
     </div>
   );
