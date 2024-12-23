@@ -28,6 +28,7 @@ export interface AllBlogsData {
 
 export interface BlogProps {
   blog: Blog;
+  blogType: keyof AllBlogsData;
 }
 
 export interface BlogPopupProps {

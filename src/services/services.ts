@@ -77,7 +77,6 @@ export const getBlogsByCategories = async (categories: any) => {
         categoryIds: categories,
       }
     );
-    console.log("Returned Categories: ", blogs);
 
     return blogs.data;
   } catch (error: any) {
@@ -186,7 +185,7 @@ export const getBlogysbySearch = async (
   blogTitle: string,
   startFrom: number
 ) => {
-  console.log(blogTitle, startFrom);
+  
   try {
     const response = await axios.post(
       "https://blogspace-app-server.vercel.app/searchedblogs",
@@ -212,7 +211,6 @@ export const persistBlogData = {
       const transaction = db.transaction("blog_data", "readwrite");
       const store = transaction.objectStore("blog_data");
       await store.put(blogData, "all_blogs_data");
-      console.log("Blog data saved successfully to IndexedDB.");
     } catch (error) {
       console.error("Error saving blog data to IndexedDB:", error);
     }

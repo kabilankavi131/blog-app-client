@@ -86,7 +86,7 @@ const BlogList: React.FC<BlogListProps> = ({ blogType }) => {
   const fetchedData = (
     <section className="blog-list">
       {blogs?.map((blog: Blog) => (
-        <BlogItem key={blog.blog_id} blog={blog} />
+        <BlogItem key={blog.blog_id} blog={blog} blogType={blogType} />
       ))}
       <div className="write-btn-mobile">
         <button onClick={() => navigateTo("/addblog")}>

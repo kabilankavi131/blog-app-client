@@ -255,6 +255,7 @@ const BlogDetailPage: React.FC<BlogTypeInterface> = ({ blogType }) => {
   };
 
   const [blog, setBlog] = useState<Blog>(location.state?.blog || defaultBlog);
+  blogType = location.state.blogType;
   const getBlog = async () => {
     // Ensure that blog.blog_id exists
     if (blog.blog_id) {
@@ -267,7 +268,6 @@ const BlogDetailPage: React.FC<BlogTypeInterface> = ({ blogType }) => {
   useEffect(() => {
     const fetchBlog = async () => {
       const blogData = await getBlog(); // Await the resolved data
-      console.log("Blogs:", blogData);
       setBlog(blogData); // Set the state with the fetched blog data
       setLikes(blogData.likes);
     };
@@ -300,18 +300,49 @@ const BlogDetailPage: React.FC<BlogTypeInterface> = ({ blogType }) => {
   const [likes, setLikes] = useState(blog.likes);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const popupRef = useRef<HTMLDivElement>(null);
-  const handleLike = () => {
-    handleLikeLottie();
-    setLikes(likes + 1);
-    const existingsessionBlog: AllBlogsData | any =
-      persistBlogData.loadBlogData();
-    existingsessionBlog[blogType].forEach((sessionblog: Blog) => {
-      if (sessionblog.blog_id === blog.blog_id) {
-        blog.likes = likes + 1;
-        persistBlogData.saveBlogData(existingsessionBlog);
+  const handleLike = async () => {
+    try {
+      // Trigger the like animation
+      handleLikeLottie();
+
+      // Load existing blog data
+      const existingsessionBlog: AllBlogsData | any =
+        await persistBlogData.loadBlogData();
+
+      // Check if blog type exists in the data
+      if (!existingsessionBlog || !existingsessionBlog[blogType]) {
+        console.error("Blog type data not found or invalid.");
+        return;
       }
-    });
-    updateBlogLikes(blog.blog_id);
+
+      // Update the likes for the specific blog
+
+      existingsessionBlog[blogType] = existingsessionBlog[blogType].map(
+        (sessionblog: Blog) => {
+          if (sessionblog.blog_id === blog.blog_id) {
+            return {
+              ...sessionblog,
+              likes: sessionblog.likes + 1,
+            };
+          }
+          return sessionblog; // Return unchanged blog
+        }
+      );
+
+      // Save the updated blog data
+      await persistBlogData.saveBlogData(existingsessionBlog);
+      // console.log("Blog data updated successfully.");
+
+      // Update the likes in the server/database
+      updateBlogLikes(blog.blog_id).then(() => {
+        // console.log("Server updated for blog ID: ", blog.blog_id);
+      });
+
+      // Update local state for UI
+      setLikes((prevLikes) => prevLikes + 1);
+    } catch (error) {
+      console.error("Error in handleLike: ", error);
+    }
   };
 
   const togglePopup = () => {

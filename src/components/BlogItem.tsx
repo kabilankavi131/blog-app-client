@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { BlogPopup } from "./BlogPopup"; // Ensure to import
-import { Blog, BlogProps } from "../interfaces/interface";
+import { AllBlogsData, Blog, BlogProps } from "../interfaces/interface";
 import toast, { Toaster } from "react-hot-toast";
 import { persistBlogData, updateBlogLikes } from "../services/services";
 import LikeLottie from "./Lottie Files/LikeLoader";
@@ -99,7 +99,7 @@ const LikesCount = styled.span`
   color: var(--secondary-text);
 `;
 
-const BlogItem: React.FC<BlogProps> = ({ blog }) => {
+const BlogItem: React.FC<BlogProps> = ({ blog, blogType }) => {
   const [likes, setLikes] = useState(blog.likes);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [showLikeAnimation, setshowLikeAnimation] = useState<boolean>(false);
@@ -111,23 +111,42 @@ const BlogItem: React.FC<BlogProps> = ({ blog }) => {
       setshowLikeAnimation(false);
     }, 2000);
   };
-  const handleLike = () => {
+  const handleLike = async () => {
     handleLikeLottie();
     setLikes(likes + 1);
-    const existingsessionBlog: Blog[] | any = persistBlogData.loadBlogData();
 
-    const updatedBlogs = existingsessionBlog?.map((sessionblog: Blog) => {
-      if (sessionblog.blog_id === blog.blog_id) {
-        return {
-          ...sessionblog,
-          likes: sessionblog.likes + 1, // Update the likes for the specific blog
-        };
+    try {
+      const existingsessionBlog = await persistBlogData.loadBlogData();
+      // console.log("Loaded Blog Data: ", existingsessionBlog);
+
+      if (!existingsessionBlog || !existingsessionBlog[blogType]) {
+        console.error("Blog type data not found or invalid.");
+        return;
       }
-      return sessionblog; // Return the unchanged blog if it doesn't match
-    });
 
-    persistBlogData.saveBlogData(updatedBlogs); // Save the updated blog data
-    updateBlogLikes(blog.blog_id);
+      const updatedBlogs = existingsessionBlog[blogType]?.map((sessionblog) => {
+        if (sessionblog.blog_id === blog.blog_id) {
+          // console.log("Updating blog: ", sessionblog.blog_id);
+          return {
+            ...sessionblog,
+            likes: sessionblog.likes + 1,
+          };
+        }
+        return sessionblog;
+      });
+
+      // Save the updated blog data
+      existingsessionBlog[blogType] = updatedBlogs;
+      await persistBlogData.saveBlogData(existingsessionBlog);
+      // console.log("Saved Updated Blog Data");
+
+      // Update the likes on the server (if applicable)
+      updateBlogLikes(blog.blog_id).then(() => {
+        // console.log("Server updated for blog ID: ", blog.blog_id);
+      });
+    } catch (error) {
+      console.error("Error in handleLike: ", error);
+    }
   };
 
   const togglePopup = () => {
@@ -190,7 +209,9 @@ const BlogItem: React.FC<BlogProps> = ({ blog }) => {
         </div>
       )}
       <NormalDiv
-        onClick={() => navigate(`/blog/${blog.blog_id}`, { state: { blog } })}
+        onClick={() =>
+          navigate(`/blog/${blog.blog_id}`, { state: { blog, blogType } })
+        }
       >
         <Title>{blog.blog_title}</Title>
         <Details>
