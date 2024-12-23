@@ -21,42 +21,43 @@ const BlogList: React.FC<BlogListProps> = ({ blogType }) => {
   const [isBlogAvailable, setIsBlogAvailable] = useState<boolean>(true);
 
   const getData = async (startingRow = 0) => {
+    let controller: any;
     try {
       setIsLoadMore(true);
 
-      // Fetch fresh blogs from the server
-      const blog: Blog[] = await getBlogs(startingRow, blogType);
+      const freshBlogs: Blog[] = await getBlogs(startingRow, blogType);
 
-      if (blog.length === 0) {
-        if (startingRow === 0) {
-          setIsBlogAvailable(false); // No blogs available initially
-        }
+      if (freshBlogs.length === 0) {
+        setIsBlogAvailable(startingRow !== 0);
         setIsLoadMore(false);
-        return; // Exit early if no blogs are returned
+        return;
       }
-
-      const newBlogs = [...blogs, ...blog]; // Merge new and old data
       const currentData: AllBlogsData =
         (await persistBlogData.loadBlogData()) || {
           Trending: [],
           Latest: [],
           Featured: [],
         };
+      if (controller) {
+        controller.abort();
+      }
+      setBlogs((prevBlogs) => {
+        const updatedBlogs = [...prevBlogs, ...freshBlogs];
+        // Save updated blogs to persistent storage
+        persistBlogData.saveBlogData({
+          ...currentData,
+          [blogType]: updatedBlogs,
+        });
 
-      // Save merged data in persistent storage
-      persistBlogData.saveBlogData({
-        ...currentData,
-        [blogType]: newBlogs,
+        return updatedBlogs;
       });
 
-      setBlogs(newBlogs); // Update state with new blogs
-      setIsLoadMore(false);
-      setIsLoading(false); // Set loading to false once blogs are fetched
-      setIsBlogAvailable(true); // Ensure this is true if blogs are successfully fetched
+      setIsBlogAvailable(true);
     } catch (error) {
       console.error("Error fetching blogs: ", error);
-      setIsLoading(false);
+    } finally {
       setIsLoadMore(false);
+      setIsLoading(false);
     }
   };
 
@@ -69,12 +70,13 @@ const BlogList: React.FC<BlogListProps> = ({ blogType }) => {
         await getData();
       } else {
         setBlogs(blogDataInStorage[blogType]);
-        setIsLoading(false);
       }
+
+      setIsLoading(false);
     };
 
     checkAndFetchData();
-  }, [blogType, setBlogs]);
+  }, [blogType]);
 
   const loadMoreData = () => {
     const startingRow = blogs.length;
