@@ -62,15 +62,11 @@ export const getBlogs = async (startFrom: number = 0, blogType: string) => {
     case "Latest":
       endpoint = "getlatestblogs";
       break;
-    default:
-      endpoint = "blogs";
   }
-  const blogs = await axios.post(
-    `https://blogspace-app-server.vercel.app/${endpoint}`,
-    {
-      startingRow: startFrom,
-    }
-  );
+  const API = `https://blogspace-app-server.vercel.app/${endpoint}`;
+  const blogs = await axios.post(API, {
+    startingRow: startFrom,
+  });
   return blogs.data;
 };
 export const getBlogsByCategories = async (categories: any) => {

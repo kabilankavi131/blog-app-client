@@ -21,38 +21,35 @@ const BlogList: React.FC<BlogListProps> = ({ blogType }) => {
   const [isBlogAvailable, setIsBlogAvailable] = useState<boolean>(true);
 
   const getData = async (startingRow = 0) => {
-    let controller: any;
     try {
       setIsLoadMore(true);
 
+      // Fetch new blogs based on the startingRow and blogType
       const freshBlogs: Blog[] = await getBlogs(startingRow, blogType);
-
+      setBlogs((prevBlogs) => [...prevBlogs, ...freshBlogs]);
+      // Handle case when no more blogs are available
       if (freshBlogs.length === 0) {
-        setIsBlogAvailable(startingRow !== 0);
+        setIsBlogAvailable(false);
         setIsLoadMore(false);
         return;
       }
-      const currentData: AllBlogsData =
+
+      // Retrieve existing IndexedDB data
+      let indexDBData: AllBlogsData =
         (await persistBlogData.loadBlogData()) || {
           Trending: [],
           Latest: [],
           Featured: [],
         };
-      if (controller) {
-        controller.abort();
-      }
-      setBlogs((prevBlogs) => {
-        const updatedBlogs = [...prevBlogs, ...freshBlogs];
-        // Save updated blogs to persistent storage
-        persistBlogData.saveBlogData({
-          ...currentData,
-          [blogType]: updatedBlogs,
-        });
 
-        return updatedBlogs;
-      });
+      // Append fresh blogs to the respective blog type
+      alert(blogType);
+      indexDBData[blogType] = [...(indexDBData[blogType] || []), ...freshBlogs];
 
-      setIsBlogAvailable(true);
+      // Persist the updated data
+      await persistBlogData.saveBlogData(indexDBData);
+
+      // Append new blogs to the current state
     } catch (error) {
       console.error("Error fetching blogs: ", error);
     } finally {
@@ -63,23 +60,27 @@ const BlogList: React.FC<BlogListProps> = ({ blogType }) => {
 
   useEffect(() => {
     const checkAndFetchData = async () => {
-      const blogDataInStorage: AllBlogsData | null =
-        await persistBlogData.loadBlogData();
-
-      if (!blogDataInStorage || !blogDataInStorage[blogType]?.length) {
-        await getData();
-      } else {
-        setBlogs(blogDataInStorage[blogType]);
+      setIsLoading(true);
+      try {
+        const indexDBData = await persistBlogData.loadBlogData();
+        if (!indexDBData || !indexDBData[blogType]?.length) {
+          await getData(0);
+        } else {
+          setBlogs(indexDBData[blogType]);
+          setIsLoading(false);
+        }
+      } catch (error) {
+        console.error("Error fetching blogs: ", error);
+      } finally {
+        setIsLoading(false);
       }
-
-      setIsLoading(false);
     };
 
     checkAndFetchData();
   }, [blogType]);
 
   const loadMoreData = () => {
-    const startingRow = blogs.length;
+    const startingRow = blogs.length; // Get the current number of blogs
     getData(startingRow);
   };
 
