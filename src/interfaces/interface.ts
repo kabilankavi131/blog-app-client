@@ -20,6 +20,12 @@ export interface Blog {
   likes: number; // Number of likes
 }
 
+export interface AllBlogsData {
+  Trending: Blog[];
+  Latest: Blog[];
+  Featured: Blog[];
+}
+
 export interface BlogProps {
   blog: Blog;
 }

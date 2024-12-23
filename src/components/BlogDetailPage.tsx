@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { BlogPopup } from "./BlogPopup"; // Ensure to import
-import { Blog } from "../interfaces/interface";
+import { AllBlogsData, Blog } from "../interfaces/interface";
 import toast, { Toaster } from "react-hot-toast";
 import { marked } from "marked";
 import {
@@ -219,7 +219,11 @@ const LikesCount = styled.span`
   color: var(--secondary-text);
 `;
 
-const BlogDetailPage: React.FC = () => {
+interface BlogTypeInterface {
+  blogType: string;
+}
+
+const BlogDetailPage: React.FC<BlogTypeInterface> = ({ blogType }) => {
   const [showLikeAnimation, setshowLikeAnimation] = useState<boolean>(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -299,8 +303,9 @@ const BlogDetailPage: React.FC = () => {
   const handleLike = () => {
     handleLikeLottie();
     setLikes(likes + 1);
-    const existingsessionBlog = persistBlogData.loadBlogData();
-    existingsessionBlog?.forEach((sessionblog) => {
+    const existingsessionBlog: AllBlogsData | any =
+      persistBlogData.loadBlogData();
+    existingsessionBlog[blogType].forEach((sessionblog: Blog) => {
       if (sessionblog.blog_id === blog.blog_id) {
         blog.likes = likes + 1;
         persistBlogData.saveBlogData(existingsessionBlog);

@@ -1,7 +1,9 @@
 import axios from "axios";
 import { blogs } from "../constants/constants";
-import { Blog, UserProfile } from "../interfaces/interface";
+import { AllBlogsData, Blog, UserProfile } from "../interfaces/interface";
 import client from "../client/client";
+import LatestBlog from "../components/LatestBlog";
+import TrendingBlog from "../components/TrendingBlog";
 
 export const getBlogDetails = (id: number): Blog | undefined => {
   const book = blogs.find((_, index) => index == id);
@@ -208,41 +210,63 @@ export const getBlogysbySearch = async (
 // Store blog data in session storage.
 
 export const persistBlogData = {
-  saveBlogData: (blogData: Blog[]): void => {
+  saveBlogData: async (blogData: AllBlogsData): Promise<void> => {
     try {
-      // Serialize the userData object into a string
-      const serializedData = JSON.stringify(blogData);
-      // Save the serialized data to sessionStorage
-      sessionStorage.setItem("blog_data", serializedData);
+      const db = await openDatabase();
+      const transaction = db.transaction("blog_data", "readwrite");
+      const store = transaction.objectStore("blog_data");
+      await store.put(blogData, "all_blogs_data");
+      console.log("Blog data saved successfully to IndexedDB.");
     } catch (error) {
-      console.error("Error saving user data to sessionStorage:", error);
+      console.error("Error saving blog data to IndexedDB:", error);
     }
   },
 
-  loadBlogData: (): Blog[] | null => {
+  loadBlogData: async (): Promise<AllBlogsData | null> => {
     try {
-      // Retrieve the serialized user data from sessionStorage
-      const serializedData = sessionStorage.getItem("blog_data");
-      if (serializedData) {
-        // Parse the string back into the UserProfile object
-        return JSON.parse(serializedData) as Blog[];
-      }
+      const db = await openDatabase();
+      const transaction = db.transaction("blog_data", "readonly");
+      const store = transaction.objectStore("blog_data");
+      const data = await new Promise<AllBlogsData | null>((resolve, reject) => {
+        const request = store.get("all_blogs_data");
+        request.onsuccess = () => resolve(request.result as AllBlogsData);
+        request.onerror = () => reject(request.error);
+      });
+      return data || null;
     } catch (error) {
-      console.error("Error loading user data from sessionStorage:", error);
+      console.error("Error loading blog data from IndexedDB:", error);
+      return null;
     }
-    // Return null user profile if no data found
-    return null;
   },
 
-  clearBlogData: (): void => {
+  clearBlogData: async (): Promise<void> => {
     try {
-      // Remove the user data from sessionStorage
-      sessionStorage.removeItem("blog_data");
+      const db = await openDatabase();
+      const transaction = db.transaction("blog_data", "readwrite");
+      const store = transaction.objectStore("blog_data");
+      await store.clear();
+      console.log("Blog data cleared from IndexedDB.");
     } catch (error) {
-      console.error("Error clearing user data from sessionStorage:", error);
+      console.error("Error clearing blog data from IndexedDB:", error);
     }
   },
 };
+
+async function openDatabase(): Promise<IDBDatabase> {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open("BlogDatabase", 1);
+
+    request.onupgradeneeded = (event) => {
+      const db = request.result;
+      if (!db.objectStoreNames.contains("blog_data")) {
+        db.createObjectStore("blog_data");
+      }
+    };
+
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
 
 export const updateBlogLikes = async (blogId: number) => {
   try {

@@ -55,7 +55,7 @@ const Content = styled.p`
   width: 100%;
   font-size: 1.2em;
   line-height: 1.6;
-  min-height:100px;
+  min-height: 100px;
   box-sizing: border-box;
 `;
 

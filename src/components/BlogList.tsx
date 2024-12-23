@@ -1,17 +1,17 @@
 import React, { useContext, useEffect, useState } from "react";
 import BlogItem from "./BlogItem";
-import { Blog } from "../interfaces/interface";
+import { AllBlogsData, Blog } from "../interfaces/interface";
 import { getBlogs, persistBlogData } from "../services/services";
 import { useNavigate } from "react-router-dom";
 import { BlogContext, BlogContextType } from "../context/BlogListsProvider";
 import Loading from "./Lottie Files/Loading";
 import StartLoading from "./Lottie Files/StartLoading";
 
-interface BlogListInterface {
-  blogType: string;
+interface BlogListProps {
+  blogType: keyof AllBlogsData; // Restrict blogType to 'Trending', 'Latest', or 'Featured'
 }
 
-const BlogList: React.FC<BlogListInterface> = ({ blogType }) => {
+const BlogList: React.FC<BlogListProps> = ({ blogType }) => {
   const navigateTo = useNavigate();
   const context = useContext(BlogContext) as BlogContextType;
 
@@ -20,67 +20,67 @@ const BlogList: React.FC<BlogListInterface> = ({ blogType }) => {
   const [isLoadMore, setIsLoadMore] = useState<boolean>(false);
   const [isBlogAvailable, setIsBlogAvailable] = useState<boolean>(true);
 
-  // Fetch blogs data
   const getData = async (startingRow = 0) => {
     try {
       setIsLoadMore(true);
+
+      // Fetch fresh blogs from the server
       const blog: Blog[] = await getBlogs(startingRow, blogType);
-      setIsLoadMore(false);
-      console.log(`${blogType} : `, blog);
 
       if (blog.length === 0) {
-        setIsBlogAvailable(false);
+        if (startingRow === 0) {
+          setIsBlogAvailable(false); // No blogs available initially
+        }
+        setIsLoadMore(false);
+        return; // Exit early if no blogs are returned
       }
 
-      // Append the new data to the existing blogs
-      setBlogs((prevBlogs: Blog[]) => {
-        let updatedBlogs = [...prevBlogs, ...blog];
-        switch (blogType) {
-          case "Trending":
-            updatedBlogs = blog;
-            break;
-          case "Latest":
-            updatedBlogs = blog;
-            break;
-        }
-        return updatedBlogs;
+      const newBlogs = [...blogs, ...blog]; // Merge new and old data
+      const currentData: AllBlogsData =
+        (await persistBlogData.loadBlogData()) || {
+          Trending: [],
+          Latest: [],
+          Featured: [],
+        };
+
+      // Save merged data in persistent storage
+      persistBlogData.saveBlogData({
+        ...currentData,
+        [blogType]: newBlogs,
       });
 
-      setIsLoading(false);
+      setBlogs(newBlogs); // Update state with new blogs
+      setIsLoadMore(false);
+      setIsLoading(false); // Set loading to false once blogs are fetched
+      setIsBlogAvailable(true); // Ensure this is true if blogs are successfully fetched
     } catch (error) {
       console.error("Error fetching blogs: ", error);
       setIsLoading(false);
+      setIsLoadMore(false);
     }
   };
 
   useEffect(() => {
     const checkAndFetchData = async () => {
-      const blogDataInSessionStorage = persistBlogData.loadBlogData();
-      if (blogDataInSessionStorage === null) {
+      const blogDataInStorage: AllBlogsData | null =
+        await persistBlogData.loadBlogData();
+
+      if (!blogDataInStorage || !blogDataInStorage[blogType]?.length) {
         await getData();
       } else {
-        setBlogs(blogDataInSessionStorage);
+        setBlogs(blogDataInStorage[blogType]);
         setIsLoading(false);
       }
     };
 
-    // checkAndFetchData();
-  }, [setBlogs]);
-
-  useEffect(() => {
-    getData();
-  }, []);
+    checkAndFetchData();
+  }, [blogType, setBlogs]);
 
   const loadMoreData = () => {
     const startingRow = blogs.length;
     getData(startingRow);
   };
-  // Ensure context is available
-  if (!context) {
-    console.warn("BlogContext is not available");
-    navigateTo("/");
-    return null;
-  }
+
   const fetchedData = (
     <section className="blog-list">
       {blogs?.map((blog: Blog) => (

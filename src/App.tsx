@@ -23,7 +23,10 @@ const App: React.FC = () => {
           <Router>
             <Routes>
               <Route path="/home" element={<HomePage />} />
-              <Route path="/blog/:id" element={<BlogDetailPage />} />
+              <Route
+                path="/blog/:id/"
+                element={<BlogDetailPage blogType="" />}
+              />
               <Route path="/addblog" element={<AddBlogPage />} />
               <Route path="/blogs/latest" element={<LatestBlog />} />
               <Route path="/blogs/trending" element={<TrendingBlog />} />
