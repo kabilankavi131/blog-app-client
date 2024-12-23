@@ -43,7 +43,6 @@ const BlogList: React.FC<BlogListProps> = ({ blogType }) => {
         };
 
       // Append fresh blogs to the respective blog type
-      alert(blogType);
       indexDBData[blogType] = [...(indexDBData[blogType] || []), ...freshBlogs];
 
       // Persist the updated data
