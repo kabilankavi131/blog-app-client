@@ -4,7 +4,7 @@ import ScrollToTopButton from "./ScrollToTopButton";
 import BlogList from "./BlogList";
 import BlogNav from "./BlogNav";
 import SearchBar from "./SearchBar";
-import { persistUserData } from "../services/services";
+import { persistUserData, updateRecentPosts } from "../services/services";
 import { useNavigate } from "react-router-dom";
 import HamburgerMenu from "./HamburgerMenu";
 const HomePage: React.FC = () => {
@@ -20,6 +20,9 @@ const HomePage: React.FC = () => {
   const handleTabChange = (tabKey: number) => {
     setActiveTab(tabKey);
   };
+  setTimeout(() => {
+    updateRecentPosts();
+  }, 300000);
   return (
     <div id="home-page" className="page">
       <AppHeader />

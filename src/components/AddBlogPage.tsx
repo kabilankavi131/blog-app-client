@@ -7,6 +7,7 @@ import {
   getDateUptoYear,
   persistBlogData,
   persistUserData,
+  updateRecentPosts,
 } from "../services/services";
 import client from "../client/client";
 import toast, { Toaster } from "react-hot-toast";
@@ -151,28 +152,6 @@ const AddBlog: React.FC = () => {
         ...prev,
         blog_cover_image: files[0],
       }));
-    }
-  };
-
-  const updateRecentPosts = async () => {
-    try {
-      const freshBlogs: Blog[] = await getBlogs(0, "Latest");
-
-      let indexDBData: AllBlogsData | any =
-        (await persistBlogData.loadBlogData()) || {
-          Trending: [],
-          Latest: [],
-          Featured: [],
-        };
-
-      indexDBData["Latest"] = [...freshBlogs];
-
-      console.log("Updated Blog Data:", indexDBData);
-
-      await persistBlogData.saveBlogData(indexDBData);
-      console.log("Data saved successfully!");
-    } catch (error) {
-      console.error("Error in updateRecentPosts:", error);
     }
   };
 

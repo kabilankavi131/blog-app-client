@@ -185,7 +185,6 @@ export const getBlogysbySearch = async (
   blogTitle: string,
   startFrom: number
 ) => {
-  
   try {
     const response = await axios.post(
       "https://blogspace-app-server.vercel.app/searchedblogs",
@@ -286,5 +285,23 @@ export const getBlogById = async (blogId: number) => {
   } catch (error) {
     console.error("Error fetching blog:", error);
     throw error; // Rethrow the error to handle it in the calling function if needed
+  }
+};
+
+export const updateRecentPosts = async () => {
+  try {
+    const freshBlogs: Blog[] = await getBlogs(0, "Latest");
+
+    let indexDBData: AllBlogsData | any =
+      (await persistBlogData.loadBlogData()) || {
+        Trending: [],
+        Latest: [],
+        Featured: [],
+      };
+
+    indexDBData["Latest"] = [...freshBlogs];
+    await persistBlogData.saveBlogData(indexDBData);
+  } catch (error) {
+    console.error("Error in updateRecentPosts:", error);
   }
 };
