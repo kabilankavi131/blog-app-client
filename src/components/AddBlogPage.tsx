@@ -165,7 +165,7 @@ const AddBlog: React.FC = () => {
           Featured: [],
         };
 
-      indexDBData["Latest"] = [...(indexDBData["Latest"] || []), ...freshBlogs];
+      indexDBData["Latest"] = [...freshBlogs];
 
       console.log("Updated Blog Data:", indexDBData);
 
