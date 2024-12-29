@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { Blog, Categories } from "../interfaces/interface";
-import { getDateUptoYear, persistUserData } from "../services/services";
+import { AllBlogsData, Blog, Categories } from "../interfaces/interface";
+import {
+  getBlogs,
+  getDateUptoYear,
+  persistBlogData,
+  persistUserData,
+} from "../services/services";
 import client from "../client/client";
 import toast, { Toaster } from "react-hot-toast";
 import ReactQuill, { Quill } from "react-quill";
@@ -149,6 +154,28 @@ const AddBlog: React.FC = () => {
     }
   };
 
+  const updateRecentPosts = async () => {
+    try {
+      const freshBlogs: Blog[] = await getBlogs(0, "Latest");
+
+      let indexDBData: AllBlogsData | any =
+        (await persistBlogData.loadBlogData()) || {
+          Trending: [],
+          Latest: [],
+          Featured: [],
+        };
+
+      indexDBData["Latest"] = [...(indexDBData["Latest"] || []), ...freshBlogs];
+
+      console.log("Updated Blog Data:", indexDBData);
+
+      await persistBlogData.saveBlogData(indexDBData);
+      console.log("Data saved successfully!");
+    } catch (error) {
+      console.error("Error in updateRecentPosts:", error);
+    }
+  };
+
   const addPost = async (payload: Blog) => {
     const formData = new FormData();
     Object.keys(payload).forEach((key) => {
@@ -167,6 +194,7 @@ const AddBlog: React.FC = () => {
       toast.dismiss(loader);
       if (response.message) {
         toast.success("Blog Posted Successfully!");
+        await updateRecentPosts();
         setTimeout(() => navigate("/"), 2000);
       } else {
         toast.error("Failed to upload blog");

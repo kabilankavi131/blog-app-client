@@ -14,6 +14,22 @@ import UserDetailsProvider from "./context/UserDetailsProvider";
 import DeveloperAboutPage from "./components/DeveloperAboutPage";
 import BlogsListsProvider from "./context/BlogListsProvider";
 import FourNotFour from "./components/FourNotFour";
+import About from "./components/AboutPage";
+const features = [
+  "Create and publish blogs effortlessly",
+  "Search and discover blogs by category",
+  "User-friendly interface for an enhanced experience",
+  "Responsive design for all devices",
+];
+
+const technologies = [
+  "React",
+  "TypeScript",
+  "Node.js",
+  "Express",
+  "MongoDB",
+  "CSS Modules",
+];
 
 const App: React.FC = () => {
   return (
@@ -36,6 +52,16 @@ const App: React.FC = () => {
               <Route path="/signup" element={<SignUpScreen />} />
               <Route path="*" element={<FourNotFour />} />
               <Route path="aboutdeveloper" element={<DeveloperAboutPage />} />
+              <Route
+                path="/about"
+                element={
+                  <About
+                    technologies={technologies}
+                    features={features}
+                    appName={"Blog Space"}
+                  />
+                }
+              />
               {/* Add UserProfile route */}
             </Routes>
           </Router>

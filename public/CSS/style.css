@@ -983,3 +983,8 @@ svg {
   top: -2px;
   left: 50px;
 }
+
+section {
+  background-color: var(--background);
+  color: var(--primary-text);
+}

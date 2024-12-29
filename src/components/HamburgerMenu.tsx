@@ -62,7 +62,7 @@ const HamburgerMenu: React.FC = () => {
           <li onClick={() => navigateTo("/")}>
             <a>Home</a>
           </li>
-          <li>
+          <li onClick={() => navigateTo("/about")}>
             <a>About</a>
           </li>
           <li>
