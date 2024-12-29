@@ -138,8 +138,24 @@ const BlogItem: React.FC<BlogProps> = ({ blog }) => {
     // console.log("Post saved");
   };
 
-  const handleShare = () => {
+  const handleShare = (blogId: number) => {
     // console.log("Post shared");
+    if (navigator.share) {
+      navigator
+        .share({
+          title: "#",
+          url: `https://blogspace-app.vercel.app/blog/${blogId}`,
+        })
+        .then(() => {
+          console.log("Thanks for sharing!");
+        })
+        .catch((err) => {
+          console.log("Error while using Web share API:");
+          console.log(err);
+        });
+    } else {
+      // alert("Browser doesn't support this API!");
+    }
   };
 
   useEffect(() => {
@@ -184,7 +200,7 @@ const BlogItem: React.FC<BlogProps> = ({ blog }) => {
           <BlogPopup
             onClose={togglePopup}
             onSave={handleSave}
-            onShare={handleShare}
+            onShare={() => handleShare(blog.blog_id)}
             isDetailPage={false}
           />
         </div>

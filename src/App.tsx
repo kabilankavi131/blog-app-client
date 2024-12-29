@@ -41,7 +41,7 @@ const App: React.FC = () => {
               <Route path="/home" element={<HomePage />} />
               <Route
                 path="/blog/:id/"
-                element={<BlogDetailPage blogType="" />}
+                element={<BlogDetailPage blogType="Featured" />}
               />
               <Route path="/addblog" element={<AddBlogPage />} />
               <Route path="/blogs/latest" element={<LatestBlog />} />

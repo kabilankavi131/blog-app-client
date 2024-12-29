@@ -225,6 +225,8 @@ interface BlogTypeInterface {
 
 const BlogDetailPage: React.FC<BlogTypeInterface> = ({ blogType }) => {
   const [showLikeAnimation, setshowLikeAnimation] = useState<boolean>(false);
+  const params = useParams();
+  const blogId: any = params.id;
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -255,11 +257,11 @@ const BlogDetailPage: React.FC<BlogTypeInterface> = ({ blogType }) => {
   };
 
   const [blog, setBlog] = useState<Blog>(location.state?.blog || defaultBlog);
-  blogType = location.state.blogType;
+
   const getBlog = async () => {
     // Ensure that blog.blog_id exists
-    if (blog.blog_id) {
-      const data = await getBlogById(blog.blog_id); // Await the asynchronous call
+    if (blogId) {
+      const data = await getBlogById(blogId); // Await the asynchronous call
       return data; // Return the fetched data
     }
     return defaultBlog; // Return default if no blog_id
@@ -354,9 +356,23 @@ const BlogDetailPage: React.FC<BlogTypeInterface> = ({ blogType }) => {
     // console.log("Post saved");
   };
 
-  const handleShare = () => {
-    // Logic to share the post
-    // console.log("Post shared");
+  const handleShare = (blogId: number) => {
+    if (navigator.share) {
+      navigator
+        .share({
+          title: "#",
+          url: `https://blogspace-app.vercel.app/blog/${blogId}`,
+        })
+        .then(() => {
+          console.log("Thanks for sharing!");
+        })
+        .catch((err) => {
+          console.log("Error while using Web share API:");
+          console.log(err);
+        });
+    } else {
+      // alert("Browser doesn't support this API!");
+    }
   };
   useEffect(() => {
     document.title = blog.blog_title;
@@ -506,7 +522,7 @@ const BlogDetailPage: React.FC<BlogTypeInterface> = ({ blogType }) => {
             <BlogPopup
               onClose={togglePopup}
               onSave={handleSave}
-              onShare={handleShare}
+              onShare={() => handleShare(blog.blog_id)}
               isDetailPage={true}
             />
           </div>
@@ -613,7 +629,7 @@ const BlogDetailPage: React.FC<BlogTypeInterface> = ({ blogType }) => {
             <BlogPopup
               onClose={togglePopup}
               onSave={handleSave}
-              onShare={handleShare}
+              onShare={() => handleShare(blog.blog_id)}
               isDetailPage={true}
             />
           </div>

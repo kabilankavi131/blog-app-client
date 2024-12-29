@@ -60,7 +60,7 @@ const BlogPopup: React.FC<BlogPopupProps> = ({
       <PopupItem
         onClick={() => {
           onSave();
-          toast.error("This is currently under development!")
+          toast.error("This is currently under development!");
         }}
         style={{
           position: "relative",
@@ -102,7 +102,6 @@ const BlogPopup: React.FC<BlogPopupProps> = ({
         }}
         onClick={() => {
           onShare();
-          toast.error("This is currently under development!")
         }}
       >
         <div
