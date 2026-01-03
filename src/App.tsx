@@ -12,6 +12,7 @@ import SignUpScreen from "./components/Signup";
 import { GoogleOAuthProvider } from "@react-oauth/google"; // Import GoogleOAuthProvider
 import UserDetailsProvider from "./context/UserDetailsProvider";
 import DeveloperAboutPage from "./components/DeveloperAboutPage";
+import PayToKabilan from "./components/pay-to-kabilan/PayToKabilan";
 import BlogsListsProvider from "./context/BlogListsProvider";
 import FourNotFour from "./components/FourNotFour";
 import About from "./components/AboutPage";
@@ -62,6 +63,7 @@ const App: React.FC = () => {
                   />
                 }
               />
+              <Route path="/pay-to-kabilan" element={<PayToKabilan />} />
               {/* Add UserProfile route */}
             </Routes>
           </Router>

@@ -17,6 +17,9 @@ const BlogNav: React.FC<BlogNavProps> = ({ activeTab, onTabChange }) => {
       case 3:
         nav("/blogs/trending");
         break;
+      case 4:
+        nav("/pay-to-kabilan");
+        break;
     }
   };
 
@@ -42,6 +45,13 @@ const BlogNav: React.FC<BlogNavProps> = ({ activeTab, onTabChange }) => {
         className={`tab ${activeTab === 3 ? "active" : ""}`}
       >
         Trending
+      </button>
+      <button
+        data-key={4}
+        onClick={toggletab}
+        className={`tab ${activeTab === 4 ? "active" : ""}`}
+      >
+        Support
       </button>
     </nav>
   );
