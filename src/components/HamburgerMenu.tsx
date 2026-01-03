@@ -24,6 +24,12 @@ const HamburgerMenu: React.FC = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isOpen]);
+
+  const navigateAndClose = (path: string) => {
+    navigateTo(path);
+    setIsOpen(false);
+  };
+
   return (
     <div className="hamburgerMenu" id="hamburgermenu">
       <button
@@ -59,11 +65,14 @@ const HamburgerMenu: React.FC = () => {
           />
         </button>
         <ul>
-          <li onClick={() => navigateTo("/")}>
+          <li onClick={() => navigateAndClose("/")}>
             <a>Home</a>
           </li>
-          <li onClick={() => navigateTo("/about")}>
+          <li onClick={() => navigateAndClose("/about")}>
             <a>About</a>
+          </li>
+          <li onClick={() => navigateAndClose("/pay-to-kabilan")}>
+            <a>Support Us</a>
           </li>
           <li>
             <a>Favourites</a>
@@ -71,7 +80,7 @@ const HamburgerMenu: React.FC = () => {
           <li>
             <a>Contact</a>
           </li>
-          <li onClick={() => navigateTo("/aboutdeveloper")}>
+          <li onClick={() => navigateAndClose("/aboutdeveloper")}>
             <a>Developer Info</a>
           </li>
         </ul>
