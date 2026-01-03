@@ -13,6 +13,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google"; // Import GoogleOAuth
 import UserDetailsProvider from "./context/UserDetailsProvider";
 import DeveloperAboutPage from "./components/DeveloperAboutPage";
 import PayToKabilan from "./components/pay-to-kabilan/PayToKabilan";
+import Payments from "./components/Payments";
 import BlogsListsProvider from "./context/BlogListsProvider";
 import FourNotFour from "./components/FourNotFour";
 import About from "./components/AboutPage";
@@ -64,6 +65,7 @@ const App: React.FC = () => {
                 }
               />
               <Route path="/pay-to-kabilan" element={<PayToKabilan />} />
+              <Route path="/payments" element={<Payments />} />
               {/* Add UserProfile route */}
             </Routes>
           </Router>

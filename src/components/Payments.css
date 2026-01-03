@@ -1,0 +1,95 @@
+.payments-page {
+  padding: 24px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+.payments-header h2 {
+  margin: 0 0 6px;
+  font-size: 1.6rem;
+}
+.payments-header .subtext {
+  color: #555;
+  margin-bottom: 18px;
+}
+
+.payments-summary {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+.card {
+  flex: 1 1 220px;
+  background: #fff;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+.card-title {
+  font-size: 0.9rem;
+  color: #666;
+}
+.card-value {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+.payments-list h3 {
+  margin-top: 0;
+}
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #eee;
+  margin-bottom: 8px;
+}
+.list-item .left {
+  max-width: 60%;
+}
+.name {
+  font-weight: 600;
+}
+.meta {
+  font-size: 0.9rem;
+  color: #666;
+}
+.right {
+  text-align: right;
+}
+.amount {
+  font-weight: 700;
+  color: #111;
+}
+.time {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.loading {
+  padding: 20px;
+  text-align: center;
+  color: #666;
+}
+
+@media (max-width: 700px) {
+  .payments-summary {
+    flex-direction: column;
+  }
+  .list-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .right {
+    text-align: left;
+    margin-top: 8px;
+  }
+}

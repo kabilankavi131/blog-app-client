@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import toast, { Toaster } from "react-hot-toast";
 import "./PayToKabilan.css";
 
 // Note: This component expects two environment variables:
@@ -23,11 +25,12 @@ const PayToKabilan: React.FC = () => {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handlePayment = async () => {
     const amt = parseFloat(amount);
     if (!amt || amt < 1) {
-      alert("Please enter a valid amount (minimum ₹1)");
+      toast.error("Please enter a valid amount (minimum ₹1)");
       return;
     }
 
@@ -36,7 +39,7 @@ const PayToKabilan: React.FC = () => {
     setLoading(true);
     const loaded = await loadRazorpay();
     if (!loaded) {
-      alert("Could not load payment gateway. Please try again later.");
+      toast.error("Could not load payment gateway. Please try again later.");
       setLoading(false);
       return;
     }
@@ -63,7 +66,7 @@ const PayToKabilan: React.FC = () => {
     }
 
     const options = {
-      key: process.env.REACT_APP_RAZORPAY_KEY_ID || "",
+      key: process.env.REACT_APP_RAZORPAY_KEY_ID || "rzp_live_oMelMcHcV7UD5O",
       amount: amtInPaise,
       currency: "INR",
       name: "Kabilan K",
@@ -72,8 +75,43 @@ const PayToKabilan: React.FC = () => {
       order_id: orderId,
       handler: function (response: any) {
         console.log(response);
-        alert("✅ Payment Successful!");
+
+        const payload = {
+          name,
+          phone,
+          email,
+          amount_in_paise: amtInPaise,
+          order_id: response?.razorpay_order_id || orderId || null,
+          payment_id: response?.razorpay_payment_id || null,
+          razorpay_signature: response?.razorpay_signature || null,
+        };
+
+        (async () => {
+          try {
+            const apiBase = "https://blogspace-app-server.vercel.app";
+            const resp = await fetch(`${apiBase}/payments`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload),
+            });
+            if (!resp.ok) {
+              console.error("Failed to record payment:", await resp.text());
+              toast.error("Payment succeeded but failed to save record.");
+            } else {
+              toast.success("Your payment data has been saved. Thank you!");
+            }
+          } catch (err) {
+            console.error("Save payment error", err);
+            toast.error("Payment succeeded but failed to save record.");
+          } finally {
+            // Navigate to payments list after showing toast
+            setTimeout(() => {
+              navigate("/payments");
+            }, 1200);
+          }
+        })();
       },
+
       prefill: {
         name: name,
         email: email,
@@ -140,12 +178,7 @@ const PayToKabilan: React.FC = () => {
             {loading ? "Processing..." : "Pay Now"}
           </button>
         </div>
-
-        <p className="note">
-          Note: This component expects a server endpoint to create orders
-          (recommended). Set <code>REACT_APP_CREATE_ORDER_URL</code> and{" "}
-          <code>REACT_APP_RAZORPAY_KEY_ID</code> in your environment.
-        </p>
+        <Toaster />
       </div>
     </div>
   );
