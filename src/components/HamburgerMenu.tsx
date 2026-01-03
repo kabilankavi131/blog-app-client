@@ -74,6 +74,9 @@ const HamburgerMenu: React.FC = () => {
           <li onClick={() => navigateAndClose("/pay-to-kabilan")}>
             <a>Support Us</a>
           </li>
+          <li onClick={() => navigateAndClose("/payments")}>
+            <a>Donors</a>
+          </li>
           <li>
             <a>Favourites</a>
           </li>

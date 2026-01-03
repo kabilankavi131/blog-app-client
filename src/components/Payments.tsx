@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import "./Payments.css";
 
@@ -16,6 +17,7 @@ type Payment = {
 const apiBase = "https://blogspace-app-server.vercel.app";
 
 const Payments: React.FC = () => {
+  const navigate = useNavigate();
   const [payments, setPayments] = useState<Payment[]>([]);
   const [summary, setSummary] = useState({
     total_count: 0,
@@ -53,11 +55,21 @@ const Payments: React.FC = () => {
     <div className="payments-page">
       <Toaster />
       <header className="payments-header">
-        <h2>Supporters</h2>
-        <p className="subtext">
-          Thanks to everyone who contributed — your support keeps the project
-          alive.
-        </p>
+        <div className="header-left">
+          <h2>Supporters</h2>
+          <p className="subtext">
+            Thanks to everyone who contributed — your support keeps the project
+            alive.
+          </p>
+        </div>
+        <div className="header-right">
+          <button
+            className="contribute-btn"
+            onClick={() => navigate("/pay-to-kabilan")}
+          >
+            Contribute
+          </button>
+        </div>
       </header>
 
       <div className="payments-summary">

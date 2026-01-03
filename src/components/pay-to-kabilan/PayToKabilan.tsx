@@ -178,6 +178,12 @@ const PayToKabilan: React.FC = () => {
             {loading ? "Processing..." : "Pay Now"}
           </button>
         </div>
+
+        <div className="actions secondary">
+          <button className="view-btn" onClick={() => navigate("/payments")}>
+            View Contributions
+          </button>
+        </div>
         <Toaster />
       </div>
     </div>

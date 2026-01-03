@@ -12,6 +12,42 @@
   margin-bottom: 18px;
 }
 
+.payments-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.header-left {
+  flex: 1;
+}
+.header-right {
+  flex: 0;
+}
+.contribute-btn {
+  background: #10b981;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+.contribute-btn:hover {
+  opacity: 0.95;
+}
+.view-btn {
+  background: transparent;
+  border: 1px solid #6366f1;
+  color: #6366f1;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.view-btn:hover {
+  opacity: 0.9;
+}
+
 .payments-summary {
   display: flex;
   gap: 16px;
