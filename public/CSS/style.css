@@ -889,6 +889,99 @@ svg {
   margin: 5px;
 }
 
+.portfolio-section {
+  position: relative;
+}
+
+.portfolio-intro {
+  margin: 0 0 1rem;
+  color: var(--secondary-text);
+}
+
+.portfolio-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.portfolio-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  padding: 22px;
+  background: linear-gradient(145deg, rgba(0, 120, 215, 0.18), rgba(131, 56, 236, 0.2));
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(8px);
+  transform: translateY(0);
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.portfolio-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 16px 36px rgba(0, 120, 215, 0.28);
+}
+
+.portfolio-card h3 {
+  margin: 0 0 0.7rem;
+  color: #33a1ff;
+}
+
+.portfolio-card p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.portfolio-glow {
+  position: absolute;
+  inset: -70%;
+  background: conic-gradient(from 90deg, transparent, rgba(255, 255, 255, 0.35), transparent 35%);
+  animation: spinGlow 8s linear infinite;
+  pointer-events: none;
+}
+
+.portfolio-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0;
+}
+
+.portfolio-tags span {
+  font-size: 12px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 99px;
+  padding: 4px 10px;
+}
+
+.portfolio-link {
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.portfolio-link::after {
+  content: "→";
+  transition: transform 0.25s ease;
+}
+
+.portfolio-link:hover::after {
+  transform: translateX(5px);
+}
+
+@keyframes spinGlow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .about-footer {
   text-align: center;
   margin-top: 30px;

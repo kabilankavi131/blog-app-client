@@ -3,6 +3,33 @@ import { useNavigate } from "react-router-dom";
 
 const DeveloperAboutPage: React.FC = () => {
   const navigate = useNavigate();
+  const portfolioProjects = [
+    {
+      title: "Blog Space",
+      description:
+        "A full-featured blogging platform with curated feeds, authentication, and reader-focused UI.",
+      stack: ["React", "TypeScript", "Firebase"],
+      link: "/home",
+      linkLabel: "Explore App",
+    },
+    {
+      title: "Developer Toolkit",
+      description:
+        "A utility-first set of components and reusable hooks for rapidly building polished interfaces.",
+      stack: ["React Hooks", "REST APIs", "Testing"],
+      link: "https://github.com/kabilankavi131",
+      linkLabel: "View Code",
+    },
+    {
+      title: "AI Learning Notes",
+      description:
+        "A growing knowledge base where I share practical machine learning experiments and outcomes.",
+      stack: ["Python", "Data Science", "Visualization"],
+      link: "https://www.linkedin.com/in/kabilankavi131",
+      linkLabel: "Follow Journey",
+    },
+  ];
+
   return (
     <div className="about-page">
       <svg
@@ -160,6 +187,36 @@ const DeveloperAboutPage: React.FC = () => {
                 </svg>
               </a>
             </div>
+          </div>
+        </section>
+
+        <section className="about-section portfolio-section">
+          <h2>My Portfolio</h2>
+          <p className="portfolio-intro">
+            Here are a few projects that represent my design taste, engineering
+            depth, and constant focus on delightful user experiences.
+          </p>
+          <div className="portfolio-grid">
+            {portfolioProjects.map((project) => (
+              <article key={project.title} className="portfolio-card">
+                <div className="portfolio-glow"></div>
+                <h3>{project.title}</h3>
+                <p>{project.description}</p>
+                <div className="portfolio-tags">
+                  {project.stack.map((item) => (
+                    <span key={`${project.title}-${item}`}>{item}</span>
+                  ))}
+                </div>
+                <a
+                  href={project.link}
+                  className="portfolio-link"
+                  target={project.link.startsWith("http") ? "_blank" : "_self"}
+                  rel={project.link.startsWith("http") ? "noopener noreferrer" : undefined}
+                >
+                  {project.linkLabel}
+                </a>
+              </article>
+            ))}
           </div>
         </section>
       </main>
