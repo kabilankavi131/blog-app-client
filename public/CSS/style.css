@@ -2,6 +2,7 @@
   margin: 0;
   padding: 0;
   background: transparent;
+  box-sizing: border-box;
 }
 :root {
   --background: #ffffff; /* Light theme background */
@@ -18,6 +19,8 @@
 html {
   background-color: var(--background);
   color: var(--primary-text);
+  max-width: 100%;
+  overflow-x: hidden;
 }
 /* Dark Theme Variables */
 [data-theme="dark"] {
@@ -40,6 +43,8 @@ html {
 #root {
   background-color: var(--background);
   color: var(--primary-text);
+  max-width: 100%;
+  overflow-x: hidden;
 }
 body {
   font-family: Arial, sans-serif;
@@ -48,6 +53,8 @@ body {
   box-sizing: border-box;
   background-color: var(--background); /* Use theme background */
   color: var(--primary-text); /* Use theme primary text color */
+  max-width: 100%;
+  overflow-x: hidden;
 }
 #home-page {
   background-color: var(--background);
@@ -373,6 +380,7 @@ body {
 .blog-nav {
   float: left;
   width: 100%;
+  box-sizing: border-box;
   display: flex;
   justify-content: center;
   gap: 4px;
