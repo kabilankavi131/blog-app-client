@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 const ScrollToTopButton: React.FC = () => {
-  let hamburgermenu: any;
+  const hamburgermenuRef = useRef<HTMLElement | null>(null);
   const [isVisible, setIsVisible] = useState(false);
+
   const handleScroll = () => {
     if (window.scrollY > 300) {
       setIsVisible(true);
     } else {
       setIsVisible(false);
-      if (hamburgermenu != null) {
-        hamburgermenu.style.display = "block";
+      if (hamburgermenuRef.current != null) {
+        hamburgermenuRef.current.style.display = "block";
       }
     }
   };
@@ -19,15 +20,20 @@ const ScrollToTopButton: React.FC = () => {
   };
 
   useEffect(() => {
-    hamburgermenu = document.getElementById("hamburgermenu");
-    window.addEventListener("scroll", () => {
-      if (hamburgermenu != null) {
-        hamburgermenu.style.display = "none";
+    hamburgermenuRef.current = document.getElementById(
+      "hamburgermenu"
+    ) as HTMLElement | null;
+
+    const onScroll = () => {
+      if (hamburgermenuRef.current != null) {
+        hamburgermenuRef.current.style.display = "none";
       }
       handleScroll();
-    });
+    };
+
+    window.addEventListener("scroll", onScroll);
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("scroll", onScroll);
     };
   }, []);
 

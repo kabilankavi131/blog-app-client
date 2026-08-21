@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserDetailsProvider";
-import { UserContextType, UserProfile } from "../interfaces/interface";
+import { UserContextType } from "../interfaces/interface";
 import UserProfilePopup from "./UserProfilePopup";
 import { persistUserData } from "../services/services";
 import toast, { Toaster } from "react-hot-toast";
@@ -17,24 +17,20 @@ const AppHeader: React.FC = () => {
   const popupRef = useRef<HTMLDivElement | null>(null);
   const themeRef = useRef<HTMLDivElement | null>(null);
 
-  const userProfile: UserProfile = persistUserData.loadUserData() || {
-    user_id: "",
-    name: "",
-  };
   const context = useContext(UserContext) as UserContextType;
   if (!context) {
     console.warn("UserContext is not available");
     navigateTo("/");
   }
-  useEffect(() => {}, []);
+
   const { user, setUser } = context;
 
-  // Initialize user data once at the beginning
   useEffect(() => {
+    const userProfile = persistUserData.loadUserData();
     if (userProfile?.user_id && user?.user_id !== userProfile.user_id) {
       setUser(userProfile);
     }
-  }, [setUser, user, userProfile]);
+  }, [setUser, user?.user_id]);
 
   const togglePopup = () => {
     setIsPopupOpen((prev) => !prev);

@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { AllBlogsData, Blog, Categories } from "../interfaces/interface";
+import { Blog, Categories } from "../interfaces/interface";
 import {
-  getBlogs,
   getDateUptoYear,
-  persistBlogData,
   persistUserData,
   updateRecentPosts,
 } from "../services/services";
@@ -116,9 +114,9 @@ const AddBlog: React.FC = () => {
       }
     };
     const user = persistUserData.loadUserData();
-    // console.log("User in write", user);
     if (!user.user_id) {
       navigate("/");
+      return;
     }
 
     window.addEventListener("keydown", handleKeyDown);
@@ -129,7 +127,7 @@ const AddBlog: React.FC = () => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [userDetails?.user_id]);
+  }, [navigate, userDetails?.user_id]);
 
   const handleChange = (
     e: React.ChangeEvent<

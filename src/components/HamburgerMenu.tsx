@@ -1,10 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const HamburgerMenu: React.FC = () => {
   const sidebarRef = useRef<HTMLDivElement | null>(null);
   const [isOpen, setIsOpen] = useState(false);
-  const navigateTo = useNavigate();
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
@@ -24,11 +23,6 @@ const HamburgerMenu: React.FC = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isOpen]);
-
-  const navigateAndClose = (path: string) => {
-    navigateTo(path);
-    setIsOpen(false);
-  };
 
   return (
     <div className="hamburgerMenu" id="hamburgermenu">
@@ -65,26 +59,40 @@ const HamburgerMenu: React.FC = () => {
           />
         </button>
         <ul>
-          <li onClick={() => navigateAndClose("/")}>
-            <a>Home</a>
-          </li>
-          <li onClick={() => navigateAndClose("/about")}>
-            <a>About</a>
-          </li>
-          <li onClick={() => navigateAndClose("/pay-to-kabilan")}>
-            <a>Support Us</a>
-          </li>
-          <li onClick={() => navigateAndClose("/payments")}>
-            <a>Donors</a>
+          <li>
+            <Link to="/" onClick={() => setIsOpen(false)}>
+              Home
+            </Link>
           </li>
           <li>
-            <a>Favourites</a>
+            <Link to="/about" onClick={() => setIsOpen(false)}>
+              About
+            </Link>
           </li>
           <li>
-            <a>Contact</a>
+            <Link to="/pay-to-kabilan" onClick={() => setIsOpen(false)}>
+              Support Us
+            </Link>
           </li>
-          <li onClick={() => navigateAndClose("/aboutdeveloper")}>
-            <a>Developer Info</a>
+          <li>
+            <Link to="/payments" onClick={() => setIsOpen(false)}>
+              Donors
+            </Link>
+          </li>
+          <li>
+            <Link to="#" onClick={(e) => e.preventDefault()}>
+              Favourites
+            </Link>
+          </li>
+          <li>
+            <Link to="#" onClick={(e) => e.preventDefault()}>
+              Contact
+            </Link>
+          </li>
+          <li>
+            <Link to="/aboutdeveloper" onClick={() => setIsOpen(false)}>
+              Developer Info
+            </Link>
           </li>
         </ul>
       </div>

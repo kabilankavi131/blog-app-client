@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { BlogPopup } from "./BlogPopup"; // Ensure to import
 import { Blog, BlogProps } from "../interfaces/interface";
-import toast, { Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 import { persistBlogData, updateBlogLikes } from "../services/services";
 import LikeLottie from "./Lottie Files/LikeLoader";
 
@@ -215,7 +215,7 @@ const BlogItem: React.FC<BlogProps> = ({ blog }) => {
         </Details>
         <CoverImage
           src={
-            blog.blog_id == 404 && blog.username == "admin"
+            blog.blog_id === 404 && blog.username === "admin"
               ? "https://inzonedesign.com/wp-content/uploads/2021/02/blog-cleverly-funny-creative-404-error-pages-metro.co_.uk_.jpg"
               : `data:image/jpeg;base64,${blog.blog_cover_image}`
           }

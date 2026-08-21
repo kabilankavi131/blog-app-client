@@ -13,12 +13,12 @@ import toast, { Toaster } from "react-hot-toast";
 const LoginScreen: React.FC = () => {
   const navigate = useNavigate();
 
-  const userProfile = persistUserData.loadUserData();
   useEffect(() => {
+    const userProfile = persistUserData.loadUserData();
     if (userProfile.user_id) {
       navigate("/home");
     }
-  }, []);
+  }, [navigate]);
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
@@ -81,7 +81,7 @@ const LoginScreen: React.FC = () => {
     const response: any = await loginUser(email, password);
     // console.log("Response Message", response);
     toast.dismiss(loader);
-    if (response.status == 200) {
+    if (response.status === 200) {
       const userData: UserProfile = {
         user_id: response.data.user.user_id,
         username: response.data.user.username,

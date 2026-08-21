@@ -14,7 +14,7 @@ const LatestBlog: React.FC = () => {
   const navigate = useNavigate();
   const context = useContext(BlogContext) as BlogContextType;
 
-  const { blogs, setBlogs } = context;
+  const { setBlogs } = context;
   const handleTabChange = (tabKey: number) => {
     setActiveTab(tabKey);
   };

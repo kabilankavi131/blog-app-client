@@ -1,5 +1,5 @@
 // SignUpScreen.tsx
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { Box, Typography, TextField, Button, Divider } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import GoogleButton from "./GoogleButton";

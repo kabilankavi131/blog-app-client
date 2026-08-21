@@ -11,7 +11,7 @@ const SearchBar: React.FC = () => {
   const context = useContext(BlogContext) as BlogContextType;
   const [query, setQuery] = useState<string>("");
   const [noBlogFound, setNoBlogFound] = useState<boolean>(false);
-  const { blogs, setBlogs } = context;
+  const { setBlogs } = context;
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [showSearchloading, setShowSearchloading] = useState<boolean>(false);
   const [categories, setCategories] = useState<Categories[]>([]);

@@ -10,13 +10,13 @@ import HamburgerMenu from "./HamburgerMenu";
 const HomePage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<number>(1); // Default to first tab
   const navigate = useNavigate();
-  const userprofile = persistUserData.loadUserData();
   useEffect(() => {
+    const userprofile = persistUserData.loadUserData();
     if (!userprofile.user_id) {
       navigate("/");
     }
     document.title = "Blog App";
-  }, []);
+  }, [navigate]);
   const handleTabChange = (tabKey: number) => {
     setActiveTab(tabKey);
   };

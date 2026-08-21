@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { BlogPopup } from "./BlogPopup"; // Ensure to import
@@ -13,8 +13,6 @@ import {
 } from "../services/services";
 import ScrollToTopButton from "./ScrollToTopButton";
 import LikeLottie from "./Lottie Files/LikeLoader";
-import { getBadgeUtilityClass } from "@mui/material";
-import { log } from "node:console";
 const BlogContainer = styled.div`
   width: 60%;
   margin: 20px auto;
@@ -236,55 +234,58 @@ const BlogDetailPage: React.FC<BlogTypeInterface> = ({ blogType }) => {
       setshowLikeAnimation(false);
     }, 2000);
   };
-  const defaultBlog: Blog = {
-    blog_id: 0,
-    username: "",
-    blog_category_id: 0,
-    blog_title: "Untitled Blog",
-    blog_description: "This is a default blog description.",
-    blog_content: "Start writing your blog content here...",
-    blog_cover_image: null,
-    blog_date: Date(),
-    blog_read_time: "0 min",
-    created_at: Date(),
-    created_by: "system",
-    modified_at: Date(),
-    modified_by: "system",
-    is_active: true,
-    tags: [],
-    category: "General",
-    likes: 0,
-  };
+  const defaultBlog = useMemo<Blog>(
+    () => ({
+      blog_id: 0,
+      username: "",
+      blog_category_id: 0,
+      blog_title: "Untitled Blog",
+      blog_description: "This is a default blog description.",
+      blog_content: "Start writing your blog content here...",
+      blog_cover_image: null,
+      blog_date: Date(),
+      blog_read_time: "0 min",
+      created_at: Date(),
+      created_by: "system",
+      modified_at: Date(),
+      modified_by: "system",
+      is_active: true,
+      tags: [],
+      category: "General",
+      likes: 0,
+    }),
+    []
+  );
 
   const [blog, setBlog] = useState<Blog>(location.state?.blog || defaultBlog);
 
-  const getBlog = async () => {
-    // Ensure that blog.blog_id exists
+  const getBlog = useCallback(async () => {
     if (blogId) {
-      const data = await getBlogById(blogId); // Await the asynchronous call
-      return data; // Return the fetched data
+      const data = await getBlogById(blogId);
+      return data;
     }
-    return defaultBlog; // Return default if no blog_id
-  };
+    return defaultBlog;
+  }, [blogId, defaultBlog]);
 
   useEffect(() => {
     const fetchBlog = async () => {
-      const blogData = await getBlog(); // Await the resolved data
-      setBlog(blogData); // Set the state with the fetched blog data
+      const blogData = await getBlog();
+      setBlog(blogData);
       setLikes(blogData.likes);
     };
 
-    fetchBlog(); // Call the fetch function
-  }, [blog.blog_id]); // Dependency array with blog.blog_id
-  let copiedCount = 0;
-  const codeCopied = () => {
-    if (copiedCount <= 1) {
+    fetchBlog();
+  }, [getBlog]);
+
+  const copiedCountRef = useRef(0);
+  const codeCopied = useCallback(() => {
+    if (copiedCountRef.current <= 1) {
       toast.success("Code Copied");
-      copiedCount++;
+      copiedCountRef.current += 1;
     } else {
-      copiedCount = 0;
+      copiedCountRef.current = 0;
     }
-  };
+  }, []);
 
   useEffect(() => {
     const blocContainer = document.getElementById("blogContent");
@@ -297,7 +298,7 @@ const BlogDetailPage: React.FC<BlogTypeInterface> = ({ blogType }) => {
       navigate("/");
       return;
     }
-  }, []);
+  }, [blog.blog_content, navigate]);
 
   const [likes, setLikes] = useState(blog.likes);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -411,7 +412,7 @@ const BlogDetailPage: React.FC<BlogTypeInterface> = ({ blogType }) => {
         codeBlog.removeEventListener("click", () => handleCodeClick(codeBlog));
       });
     };
-  }, [blog.blog_title]); // Include blog.blog_title to avoid unnecessary re-renders
+  }, [blog.blog_title, codeCopied]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -437,7 +438,7 @@ const BlogDetailPage: React.FC<BlogTypeInterface> = ({ blogType }) => {
   }
   // console.log("Blog: ", blog);
 
-  if (blog.blog_category_id == 0) {
+  if (blog.blog_category_id === 0) {
     return (
       <div style={{ textAlign: "center" }}>
         <h1>Go to Home Page</h1>
@@ -563,7 +564,7 @@ const BlogDetailPage: React.FC<BlogTypeInterface> = ({ blogType }) => {
       </BlogContainer>
     </div>
   );
-  if (blog.blog_id == 404 && blog.username == "admin") {
+  if (blog.blog_id === 404 && blog.username === "admin") {
     return FourNotFour;
   }
 

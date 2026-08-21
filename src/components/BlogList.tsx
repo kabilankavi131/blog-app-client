@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import BlogItem from "./BlogItem";
 import { AllBlogsData, Blog } from "../interfaces/interface";
 import { getBlogs, persistBlogData } from "../services/services";
@@ -20,42 +20,38 @@ const BlogList: React.FC<BlogListProps> = ({ blogType }) => {
   const [isLoadMore, setIsLoadMore] = useState<boolean>(false);
   const [isBlogAvailable, setIsBlogAvailable] = useState<boolean>(true);
 
-  const getData = async (startingRow = 0) => {
-    try {
-      setIsLoadMore(true);
+  const getData = useCallback(
+    async (startingRow = 0) => {
+      try {
+        setIsLoadMore(true);
 
-      // Fetch new blogs based on the startingRow and blogType
-      const freshBlogs: Blog[] = await getBlogs(startingRow, blogType);
-      setBlogs((prevBlogs) => [...prevBlogs, ...freshBlogs]);
-      // Handle case when no more blogs are available
-      if (freshBlogs.length === 0) {
-        setIsBlogAvailable(false);
+        const freshBlogs: Blog[] = await getBlogs(startingRow, blogType);
+        setBlogs((prevBlogs) => [...prevBlogs, ...freshBlogs]);
+
+        if (freshBlogs.length === 0) {
+          setIsBlogAvailable(false);
+          setIsLoadMore(false);
+          return;
+        }
+
+        let indexDBData: AllBlogsData =
+          (await persistBlogData.loadBlogData()) || {
+            Trending: [],
+            Latest: [],
+            Featured: [],
+          };
+
+        indexDBData[blogType] = [...(indexDBData[blogType] || []), ...freshBlogs];
+        await persistBlogData.saveBlogData(indexDBData);
+      } catch (error) {
+        console.error("Error fetching blogs: ", error);
+      } finally {
         setIsLoadMore(false);
-        return;
+        setIsLoading(false);
       }
-
-      // Retrieve existing IndexedDB data
-      let indexDBData: AllBlogsData =
-        (await persistBlogData.loadBlogData()) || {
-          Trending: [],
-          Latest: [],
-          Featured: [],
-        };
-
-      // Append fresh blogs to the respective blog type
-      indexDBData[blogType] = [...(indexDBData[blogType] || []), ...freshBlogs];
-
-      // Persist the updated data
-      await persistBlogData.saveBlogData(indexDBData);
-
-      // Append new blogs to the current state
-    } catch (error) {
-      console.error("Error fetching blogs: ", error);
-    } finally {
-      setIsLoadMore(false);
-      setIsLoading(false);
-    }
-  };
+    },
+    [blogType, setBlogs]
+  );
 
   useEffect(() => {
     const checkAndFetchData = async () => {
@@ -76,7 +72,7 @@ const BlogList: React.FC<BlogListProps> = ({ blogType }) => {
     };
 
     checkAndFetchData();
-  }, [blogType]);
+  }, [blogType, getData, setBlogs]);
 
   const loadMoreData = () => {
     const startingRow = blogs.length; // Get the current number of blogs

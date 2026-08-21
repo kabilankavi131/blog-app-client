@@ -14,17 +14,17 @@ const TrendingBlog: React.FC = () => {
   const [activeTab, setActiveTab] = useState<number>(3); // Default to first tab
   const context = useContext(BlogContext) as BlogContextType;
 
-  const { blogs, setBlogs } = context;
+  const { setBlogs } = context;
   const handleTabChange = (tabKey: number) => {
     setActiveTab(tabKey);
   };
   useEffect(() => {
-    setBlogs([])
+    setBlogs([]);
     const userprofile = persistUserData.loadUserData();
     if (!userprofile.user_id) {
       navigate("/");
     }
-  }, []);
+  }, [navigate, setBlogs]);
   return (
     <div id="home-page" className="page">
       <AppHeader />
