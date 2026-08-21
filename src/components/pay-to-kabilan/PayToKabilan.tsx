@@ -130,9 +130,13 @@ const PayToKabilan: React.FC = () => {
   return (
     <div className="pay-container">
       <div className="pay-box">
-        <h2>Support Kabilan</h2>
+        <button className="payment-back-btn" onClick={() => navigate("/home")}>
+          <span aria-hidden="true">←</span> Back to Blog Space
+        </button>
+        <div className="payment-badge"><span aria-hidden="true">♥</span> SUPPORT BLOG SPACE</div>
+        <h1>Fuel more stories.</h1>
         <p className="subtext">
-          Your secure contribution helps keep the work going.
+          Your secure contribution helps keep this thoughtful little corner of the internet growing.
         </p>
 
         <label htmlFor="name">Name</label>
@@ -169,19 +173,20 @@ const PayToKabilan: React.FC = () => {
           placeholder="e.g. 500"
         />
 
+        <div className="secure-note"><span aria-hidden="true">⌁</span> Secure payment powered by Razorpay</div>
         <div className="actions">
           <button
             onClick={handlePayment}
             disabled={loading}
             className="pay-btn"
           >
-            {loading ? "Processing..." : "Pay Now"}
+            {loading ? "Preparing secure checkout..." : "Continue to secure payment →"}
           </button>
         </div>
 
         <div className="actions secondary">
           <button className="view-btn" onClick={() => navigate("/payments")}>
-            View Contributions
+            View the community wall
           </button>
         </div>
         <Toaster />
