@@ -43,6 +43,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "update-browserslist-db": "npx update-browserslist-db@latest",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -64,6 +65,7 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.0",
     "@types/jest": "^29.5.14",
     "@types/jwt-decode": "^2.2.1",
     "@types/node": "^22.10.1",
