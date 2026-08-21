@@ -27,7 +27,7 @@ const BlogNav: React.FC<BlogNavProps> = ({ activeTab, onTabChange }) => {
   };
 
   return (
-    <nav>
+    <nav className="blog-nav" aria-label="Blog sections">
       <button
         data-key={1}
         onClick={toggletab}
