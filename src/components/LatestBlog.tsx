@@ -24,7 +24,7 @@ const LatestBlog: React.FC = () => {
     if (!userprofile.user_id) {
       navigate("/");
     }
-  }, []);
+  }, [navigate, setBlogs]);
   return (
     <div id="home-page" className="page">
       <AppHeader />

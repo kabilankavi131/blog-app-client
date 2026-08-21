@@ -1,5 +1,5 @@
 import React, { createContext, useState, ReactNode } from "react";
-import { UserProfile, Blog } from "../interfaces/interface";
+import { Blog } from "../interfaces/interface";
 
 export interface BlogContextType {
   blogs: Blog[]; // Array of Blog
@@ -7,7 +7,7 @@ export interface BlogContextType {
 }
 
 export const BlogContext = createContext<BlogContextType | undefined>(
-  undefined
+  undefined,
 );
 
 interface BlogsListsProviderProps {

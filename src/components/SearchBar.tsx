@@ -24,15 +24,15 @@ const SearchBar: React.FC = () => {
       loadMore.style.display = "none";
     }
 
-    const blogs: Blog[] = await getBlogysbySearch(blogTitle, startFrom);
-    if (blogs.length === 0) {
+    const fetchedBlogs: Blog[] = await getBlogysbySearch(blogTitle, startFrom);
+    if (fetchedBlogs.length === 0) {
       setBlogs([]);
       setNoBlogFound(true);
       setShowSearchloading(false);
       return;
     }
     setShowSearchloading(false);
-    setBlogs(blogs);
+    setBlogs(fetchedBlogs);
     setNoBlogFound(false);
   };
 
@@ -42,7 +42,7 @@ const SearchBar: React.FC = () => {
       const response: Categories[] = await client(
         "https://blogspace-app-server.vercel.app/categories",
         "GET",
-        {}
+        {},
       );
       setCategories(response);
     } catch (err) {
@@ -104,7 +104,7 @@ const SearchBar: React.FC = () => {
         selectedCategories.push(filter.value);
       }
     });
-    if (selectedCategories.length == 0) {
+    if (selectedCategories.length === 0) {
       toast.error("Please select at least one category to proceed!");
       return;
     }
@@ -112,15 +112,14 @@ const SearchBar: React.FC = () => {
 
     // Function to fetch filtered blogs
     const loader = toast.loading(
-      "Loading Selected categories blogs, please wait..."
+      "Loading Selected categories blogs, please wait...",
     );
     const getFilteredBlogs = async () => {
       try {
-        const blogs: Blog[] | any = await getBlogsByCategories(
-          selectedCategories
-        );
+        const blogs: Blog[] | any =
+          await getBlogsByCategories(selectedCategories);
         toast.dismiss(loader);
-        if (blogs.length == 0) {
+        if (blogs.length === 0) {
           toast.error("No blogs found with selected categories");
           setDefaultBlog();
         } else {
@@ -161,7 +160,7 @@ const SearchBar: React.FC = () => {
             width="24"
             height="24"
             onClick={() => {
-              if (query.trim() != "") getSearchedBlogs(query, 0);
+              if (query.trim() !== "") getSearchedBlogs(query, 0);
             }}
           >
             <path

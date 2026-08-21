@@ -1,12 +1,9 @@
 import axios from "axios";
 import { blogs } from "../constants/constants";
 import { AllBlogsData, Blog, UserProfile } from "../interfaces/interface";
-import client from "../client/client";
-import LatestBlog from "../components/LatestBlog";
-import TrendingBlog from "../components/TrendingBlog";
 
 export const getBlogDetails = (id: number): Blog | undefined => {
-  const book = blogs.find((_, index) => index == id);
+  const book = blogs.find((_, index) => index === id);
   if (book) return book;
   const defaultBlog: Blog = {
     blog_id: 0, // Default ID for the blog
@@ -46,7 +43,7 @@ export const addBlog = async (blog: Blog) => {
   formData.append("profile_image_blob", blog.blog_cover_image || "");
   await axios.post(
     "https://blogspace-app-server.vercel.app/blogs/upload",
-    formData
+    formData,
   );
 };
 
@@ -75,7 +72,7 @@ export const getBlogsByCategories = async (categories: any) => {
       "https://blogspace-app-server.vercel.app/blogsbycategories",
       {
         categoryIds: categories,
-      }
+      },
     );
 
     return blogs.data;
@@ -95,12 +92,12 @@ export const loginUser = async (email: string, password: string) => {
   try {
     const respose = await axios.post(
       "https://blogspace-app-server.vercel.app/loginuser",
-      formData
+      formData,
     );
     return respose;
   } catch (error) {
-    return 500;
     console.error("Error during user registration:", error);
+    return 500;
   }
 };
 
@@ -122,7 +119,7 @@ export const registerUser = async (userData: UserProfile) => {
   try {
     const response = await axios.post(
       "https://blogspace-app-server.vercel.app/users/upload",
-      formData
+      formData,
     );
     return response;
   } catch (error) {
@@ -183,7 +180,7 @@ export function getDateUptoYear() {
 
 export const getBlogysbySearch = async (
   blogTitle: string,
-  startFrom: number
+  startFrom: number,
 ) => {
   try {
     const response = await axios.post(
@@ -191,7 +188,7 @@ export const getBlogysbySearch = async (
       {
         query: blogTitle,
         startingRow: startFrom,
-      }
+      },
     );
     // console.log("Searched Blogs: ", response);
     return response.data;
@@ -267,7 +264,7 @@ export const updateBlogLikes = async (blogId: number) => {
       "https://blogspace-app-server.vercel.app/blogs/likes",
       {
         blog_id: blogId,
-      }
+      },
     );
     return response.data; // Returns the success message or response data
   } catch (error) {
@@ -279,7 +276,7 @@ export const updateBlogLikes = async (blogId: number) => {
 export const getBlogById = async (blogId: number) => {
   try {
     const response = await axios.get(
-      `https://blogspace-app-server.vercel.app/singleblog/${blogId}`
+      `https://blogspace-app-server.vercel.app/singleblog/${blogId}`,
     );
     return response.data; // Returns the blog data
   } catch (error) {

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { UserProfile } from "../interfaces/interface";
 
-export const useForm = <T extends {}>(initialState: UserProfile) => {
+export const useForm = (initialState: UserProfile) => {
   const [formData, setFormData] = useState<UserProfile>(initialState);
 
   const handleInputChange =
